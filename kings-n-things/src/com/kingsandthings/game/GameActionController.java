@@ -9,7 +9,6 @@ import com.kingsandthings.Controller;
 import com.kingsandthings.model.Game;
 import com.kingsandthings.model.Player;
 import com.kingsandthings.model.phase.Phase;
-import com.kingsandthings.model.things.Thing;
 
 public class GameActionController extends Controller {
 
