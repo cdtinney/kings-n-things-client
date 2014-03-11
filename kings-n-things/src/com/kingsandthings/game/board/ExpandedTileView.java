@@ -18,8 +18,8 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextBuilder;
 
 import com.kingsandthings.game.InitializableView;
+import com.kingsandthings.model.Game;
 import com.kingsandthings.model.Player;
-import com.kingsandthings.model.PlayerManager;
 import com.kingsandthings.model.board.Tile;
 import com.kingsandthings.model.things.Thing;
 import com.kingsandthings.util.DataImageView;
@@ -30,6 +30,7 @@ public class ExpandedTileView extends VBox implements InitializableView {
 	private static final int THING_WIDTH = 60;
 	
 	// Model
+	private Game game;
 	private Tile tile;
 	
 	// Map each player to a list of images
@@ -38,7 +39,9 @@ public class ExpandedTileView extends VBox implements InitializableView {
 	// Views
 	private List<GridPane> grids;
 	
-	public ExpandedTileView() {
+	public ExpandedTileView(Game game) {
+		this.game = game;
+		
 		playerThingImages = new LinkedHashMap<Player, List<DataImageView>>();
 		grids = new ArrayList<GridPane>();
 	}
@@ -94,7 +97,7 @@ public class ExpandedTileView extends VBox implements InitializableView {
 		
 		for (Player player : playerThingImages.keySet()) {
 			
-			if (player != PlayerManager.getInstance().getActivePlayer()) {
+			if (player != game.getActivePlayer()) {
 				continue;
 			}
 			

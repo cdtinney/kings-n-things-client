@@ -13,8 +13,6 @@ public class PhaseManager {
 	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(PhaseManager.class.getName());
 	
-	private static PhaseManager INSTANCE = null;
-	
 	protected Game game;
 	
 	private List<Phase> phases;
@@ -27,27 +25,20 @@ public class PhaseManager {
 		phases = new ArrayList<Phase>();
 		
 		// Add the phases (in order)
-		phases.add(new StartingKingdomsPhase());
-		phases.add(new TowerPlacementPhase());
-		phases.add(new InitialPlacementPhase());
+		phases.add(new StartingKingdomsPhase(game));
+		phases.add(new TowerPlacementPhase(game));
+		phases.add(new InitialPlacementPhase(game));
 		
 		// Main sequence
-		phases.add(new GoldCollectionPhase());
-		phases.add(new RecruitCharactersPhase());
-		phases.add(new ThingRecruitmentPhase());
-		phases.add(new RandomEventsPhase());
+		phases.add(new GoldCollectionPhase(game));
+		phases.add(new RecruitCharactersPhase(game));
+		phases.add(new ThingRecruitmentPhase(game));
+		phases.add(new RandomEventsPhase(game));
 		phases.add(new MovementPhase(game));
-		phases.add(new ConstructionPhase());
-		phases.add(new SpecialPowersPhase());
-		phases.add(new ChangingPlayerOrderPhase());
+		phases.add(new ConstructionPhase(game));
+		phases.add(new SpecialPowersPhase(game));
+		phases.add(new ChangingPlayerOrderPhase(game));
 		
-		// TODO - fix
-		INSTANCE = this;
-		
-	}
-	
-	public static PhaseManager getInstance() {
-		return INSTANCE;
 	}
 	
 	public void beginPhases() {

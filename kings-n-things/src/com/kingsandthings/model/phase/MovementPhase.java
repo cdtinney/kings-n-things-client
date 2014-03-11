@@ -12,7 +12,7 @@ public class MovementPhase extends Phase {
 	private Game game;	
 	
 	public MovementPhase(Game game) {
-		super("Movement", false, true, 1, false);
+		super(game, "Movement", false, true, 1, false);
 		
 		this.game = game;
 	}
@@ -50,7 +50,7 @@ public class MovementPhase extends Phase {
 		BoardView.setInstructionText("do some movement");
 		
 		// Skip the player if they have no movement possible
-		if (!game.getBoard().movementPossible(playerManager.getActivePlayer())) {
+		if (!game.getBoard().movementPossible(game.getActivePlayer())) {
 			BoardView.setInstructionText("no movement possible! please end turn");
 		}
 		

@@ -3,7 +3,7 @@ package com.kingsandthings.model.phase;
 import java.util.logging.Logger;
 
 import com.kingsandthings.game.events.NotificationDispatcher;
-import com.kingsandthings.model.PlayerManager;
+import com.kingsandthings.model.Game;
 
 public abstract class Phase {
 	
@@ -17,19 +17,22 @@ public abstract class Phase {
 		STEP
 	}
 	
-	protected PlayerManager playerManager = PlayerManager.getInstance();
+	
 	protected String currentStep = "none";
+	
+	protected Game game;
 	
 	private String name;
 	
-	private boolean mandatory;
+	private boolean mandatory; 
 	private boolean playerInteraction;
 	private boolean initial;
 	
 	private int numPlayerTurns;
 	private int currentNumberTurns = 0;
 	
-	public Phase(String name, boolean mandatory, boolean playerInteraction, int numPlayerTurns, boolean initial) {
+	public Phase(Game game, String name, boolean mandatory, boolean playerInteraction, int numPlayerTurns, boolean initial) {
+		this.game = game;
 		this.name = name;
 		this.mandatory = mandatory;
 		this.numPlayerTurns = numPlayerTurns;
@@ -55,7 +58,7 @@ public abstract class Phase {
 	
 	public void nextTurn() {
 		
-		playerManager.nextPlayer();
+		game.getPlayerManager().nextPlayer();
 		currentNumberTurns++;
 		
 		if (isLastTurn()) {
@@ -64,7 +67,7 @@ public abstract class Phase {
 			end();
 			
 			// Move to next phase
-			PhaseManager.getInstance().nextPhase();
+			game.getPhaseManager().nextPhase();
 			
 		} else {
 			
@@ -104,11 +107,21 @@ public abstract class Phase {
 	}
 	
 	private boolean allPlayersCompletedTurn() {
-		return currentNumberTurns % PlayerManager.getInstance().getNumPlayers() == 0;
+		
+		if (game != null) {
+			return currentNumberTurns % game.getPlayerManager().getNumPlayers() == 0;
+		}
+		
+		return false;
 	}
 	
 	private boolean isLastTurn() {
-		return currentNumberTurns == (numPlayerTurns * PlayerManager.getInstance().getNumPlayers());
+		
+		if (game != null) {
+			return currentNumberTurns == (numPlayerTurns * game.getPlayerManager().getNumPlayers());
+		}
+		
+		return false;
 	}
 
 }

@@ -20,7 +20,6 @@ import com.kingsandthings.model.Player;
 import com.kingsandthings.model.PlayerManager;
 import com.kingsandthings.model.board.Board;
 import com.kingsandthings.model.board.Tile;
-import com.kingsandthings.model.phase.PhaseManager;
 import com.kingsandthings.model.things.Thing;
 import com.kingsandthings.util.CustomDataFormat;
 
@@ -56,14 +55,14 @@ public class BoardController extends Controller {
 		
 		// Initialize the expand tile controller
 		expandedTileController = new ExpandedTileController();
-		expandedTileController.initialize(players);
+		expandedTileController.initialize(game);
 		
 		// Add the expanded tile view to the board view (initially not visible)
 		boardView.getChildren().add(expandedTileController.getView());
 		
 		// Set up starting tiles (TASK - this should be done based on player dice rolls)
 		for (Player player : players) {
-			int pos = PlayerManager.getInstance().getPosition(player);
+			int pos = game.getPlayerManager().getPosition(player);
 			board.setStartingTile(player, pos);
 		}
 		
@@ -152,10 +151,10 @@ public class BoardController extends Controller {
 		TileActionMenu tileActionMenu = (TileActionMenu) item.getParentPopup();
 		TileView tileView = tileActionMenu.getOwner();
 		
-		Player player = PlayerManager.getInstance().getActivePlayer();
+		Player player = game.getActivePlayer();
 		
 		if (board.setTileControl(tileView.getTile(), player, true)) {
-			PhaseManager.getInstance().endPlayerTurn();
+			game.getPhaseManager().endPlayerTurn();
 		}
 		
 	}
@@ -169,7 +168,7 @@ public class BoardController extends Controller {
 			
 			TileView tileView = (TileView) event.getSource();
 			
-			boolean activePlayerOwned = tileView.getTile().getOwner() == PlayerManager.getInstance().getActivePlayer();
+			boolean activePlayerOwned = tileView.getTile().getOwner() == game.getActivePlayer();
 			
 			if (activePlayerOwned) {
 				dragEvent.acceptTransferModes(TransferMode.ANY);
@@ -240,12 +239,14 @@ public class BoardController extends Controller {
 				
 				board.moveThingsToUnexploredTile(roll, initialMovementTile, tile, selectedThings);
 				
+				BoardView.setInstructionText("do some movement");
+				
 			} else {
 				board.moveThings(initialMovementTile, tile, selectedThings);
 				
 			}
 			
-			Player player = game.getPlayerManager().getActivePlayer();
+			Player player = game.getActivePlayer();
 			if (!board.movementPossible(player)) {
 				BoardView.setInstructionText("no more movement possible! please end turn");
 			}

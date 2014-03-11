@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import com.kingsandthings.game.board.BoardView;
 import com.kingsandthings.logging.LogLevel;
+import com.kingsandthings.model.Game;
 import com.kingsandthings.model.Player;
 import com.kingsandthings.model.things.Fort;
 import com.kingsandthings.model.things.SpecialIncome;
@@ -14,8 +15,8 @@ public class GoldCollectionPhase extends Phase {
 	
 	private static Logger LOGGER = Logger.getLogger(GoldCollectionPhase.class.getName());
 
-	public GoldCollectionPhase() {
-		super("Gold Collection", true, false, 1, false);
+	public GoldCollectionPhase(Game game) {
+		super(game, "Gold Collection", true, false, 1, false);
 	}
 
 	@Override
@@ -31,7 +32,7 @@ public class GoldCollectionPhase extends Phase {
 
 		BoardView.setInstructionText("please collect gold");
 		
-		Player player = playerManager.getActivePlayer();
+		Player player = game.getActivePlayer();
 		
 		int total = computeIncome(player);
 		player.addGold(total);

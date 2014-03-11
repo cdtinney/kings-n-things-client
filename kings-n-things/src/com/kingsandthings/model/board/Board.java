@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.kingsandthings.logging.LogLevel;
+import com.kingsandthings.model.Game;
 import com.kingsandthings.model.Player;
-import com.kingsandthings.model.PlayerManager;
 import com.kingsandthings.model.enums.Terrain;
-import com.kingsandthings.model.phase.PhaseManager;
 import com.kingsandthings.model.things.Creature;
 import com.kingsandthings.model.things.Fort;
 import com.kingsandthings.model.things.Thing;
@@ -20,7 +19,12 @@ public class Board {
 	
 	private final int NUM_INITIAL_TILES = 3;
 	
+	private Game game;
 	private Tile[][] tiles;
+	
+	public Board(Game game) {
+		this.game = game;
+	}
 	
 	public void generateBoard(int numPlayers) {
 		
@@ -70,7 +74,8 @@ public class Board {
 			return;
 		}
 		
-		Player player = PlayerManager.getInstance().getActivePlayer();
+		Player player = game.getActivePlayer();
+		
 		boolean success = moveThings(beginTile, endTile, things);
 		
 		if (success) {
@@ -85,7 +90,7 @@ public class Board {
 	
 	public boolean moveThings(Tile beginTile, Tile endTile, List<Thing> things) {
 
-		Player player = PlayerManager.getInstance().getActivePlayer();
+		Player player = game.getActivePlayer();
 		
 		boolean success =  endTile.addThings(player, things);
 		if (success) {
@@ -103,8 +108,8 @@ public class Board {
 	}
 	
 	public boolean addThingsToTile(Tile tile, List<Thing> things) {
-		
-		Player player = PlayerManager.getInstance().getActivePlayer();
+
+		Player player = game.getActivePlayer();
 		
 		boolean success = false;
 		
@@ -115,7 +120,7 @@ public class Board {
 				
 				success = player.placeFort((Fort) thing, tile);
 				if (success) {
-					PhaseManager.getInstance().endPlayerTurn();
+					game.getPhaseManager().endPlayerTurn();
 				}
 				return success;
 			}

@@ -16,9 +16,9 @@ import javafx.scene.input.TransferMode;
 
 import com.kingsandthings.Controller;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
+import com.kingsandthings.model.Game;
 import com.kingsandthings.model.Player;
 import com.kingsandthings.model.PlayerManager;
-import com.kingsandthings.model.phase.PhaseManager;
 import com.kingsandthings.model.things.Thing;
 import com.kingsandthings.util.CustomDataFormat;
 import com.kingsandthings.util.DataImageView;
@@ -29,14 +29,17 @@ public class PlayerPaneController extends Controller {
 	private static Logger LOGGER = Logger.getLogger(PlayerPaneController.class.getName());
 	
 	// Model
+	private Game game;
 	private List<Thing> selectedThings;
 	
 	// View
 	private PlayerPane view;
 	
-	public void initialize(List<Player> players) {
+	public void initialize(Game game) {
 		
-		view = new PlayerPane(players);
+		this.game = game;
+		
+		view = new PlayerPane(game.getPlayerManager().getPlayers());
 		view.initialize();
 		
 		selectedThings = new ArrayList<Thing>();
@@ -74,11 +77,11 @@ public class PlayerPaneController extends Controller {
 						}
 						
 						Player player = playerView.getPlayer();
-						if (PlayerManager.getInstance().getActivePlayer() != player) {
+						if (game.getActivePlayer() != player) {
 							event.consume();
 						}
 						
-						if (!PhaseManager.getInstance().getCurrentPhase().getStep().equals("Thing_Placement")) {
+						if (!game.getPhaseManager().getCurrentPhase().getStep().equals("Thing_Placement")) {
 							event.consume();
 						}
 						
@@ -103,11 +106,11 @@ public class PlayerPaneController extends Controller {
 							return;
 						}
 						
-						if (PlayerManager.getInstance().getActivePlayer() != player) {
+						if (game.getActivePlayer() != player) {
 							event.consume();
 						}
 						
-						if (!PhaseManager.getInstance().getCurrentPhase().getName().equals("Tower Placement")) {
+						if (!game.getPhaseManager().getCurrentPhase().getName().equals("Tower Placement")) {
 							event.consume();
 						}
 					}

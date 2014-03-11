@@ -1,9 +1,11 @@
 package com.kingsandthings.model.phase;
 
+import com.kingsandthings.model.Game;
+
 public class RecruitCharactersPhase extends Phase {
 
-	public RecruitCharactersPhase() {
-		super("Recruit Characters (SKIP)", false, false, 1, false);
+	public RecruitCharactersPhase(Game game) {
+		super(game, "Recruit Characters (SKIP)", false, false, 1, false);
 	}
 
 }

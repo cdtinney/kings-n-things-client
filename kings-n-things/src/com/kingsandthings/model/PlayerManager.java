@@ -10,16 +10,9 @@ import javafx.scene.image.Image;
 
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
-/**
- * @author Colin Tinney
- * 
- * Singleton manager class for players.
- *
- */
 public class PlayerManager {
 	
 	private static Logger LOGGER = Logger.getLogger(PlayerManager.class.getName());
-	private static PlayerManager INSTANCE = null;
 	
 	private Integer numPlayers;
 	
@@ -28,18 +21,9 @@ public class PlayerManager {
 	
 	private Player activePlayer;
 	
-	private PlayerManager() {
+	public PlayerManager() {
 		players = new HashMap<String, Player>();
 		positions = new HashMap<Player, Integer>();
-	}
-	
-	public static PlayerManager getInstance() {
-		
-		if (INSTANCE == null) {
-			INSTANCE = new PlayerManager();
-		}
-		
-		return INSTANCE;
 	}
 	
 	public Player getActivePlayer() {

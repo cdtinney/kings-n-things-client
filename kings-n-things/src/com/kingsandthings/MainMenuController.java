@@ -1,5 +1,6 @@
 package com.kingsandthings;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -60,6 +61,10 @@ public class MainMenuController extends Controller {
 				return;
 			}
 			
+		}
+		
+		if (playerNames.size() == 0) {
+			playerNames.addAll(Arrays.asList("Player 1", "Player 2", "Player 3", "Player 4"));
 		}
 		
 		gameController.initialize(stage, playerNames, this);

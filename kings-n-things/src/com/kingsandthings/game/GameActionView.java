@@ -78,7 +78,7 @@ public class GameActionView extends VBox implements InitializableView {
 			list.setItems(FXCollections.observableArrayList(game.getCup().getThingNames()));
 			
 			// TASK - Demo only (selectable list of things)
-			if (PhaseManager.getInstance().getCurrentPhase().getStep().equals("Draw_Things")) {
+			if (game.getPhaseManager().getCurrentPhase().getStep().equals("Draw_Things")) {
 				list.setVisible(true);
 				selectButton.setVisible(true);
 			}

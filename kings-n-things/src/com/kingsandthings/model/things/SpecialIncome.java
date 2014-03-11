@@ -2,9 +2,9 @@ package com.kingsandthings.model.things;
 
 import java.util.logging.Logger;
 
-import com.kingsandthings.model.enums.Terrain;
-
 import javafx.scene.image.Image;
+
+import com.kingsandthings.model.enums.Terrain;
 
 @SuppressWarnings("serial")
 public class SpecialIncome extends Thing {

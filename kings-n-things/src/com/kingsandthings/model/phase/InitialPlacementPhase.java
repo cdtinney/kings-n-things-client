@@ -4,13 +4,14 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 import com.kingsandthings.game.board.BoardView;
+import com.kingsandthings.model.Game;
 
 public class InitialPlacementPhase extends Phase {
 	
 	private final static BooleanProperty active = new SimpleBooleanProperty(false);
 
-	public InitialPlacementPhase() {
-		super("Thing Placement", false, true, 2, true);
+	public InitialPlacementPhase(Game game) {
+		super(game, "Thing Placement", false, true, 2, true);
 	}
 	
 	public static BooleanProperty getActive() {

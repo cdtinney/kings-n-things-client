@@ -11,9 +11,9 @@ import com.kingsandthings.model.things.Thing;
 public class Game {
 
 	private static Logger LOGGER = Logger.getLogger(Game.class.getName());
-	
+
+	private PlayerManager playerManager = new PlayerManager();
 	private PhaseManager phaseManager;
-	private PlayerManager playerManager = PlayerManager.getInstance();
 	
 	private final int NUM_INITIAL_THINGS = 10;
 	
@@ -22,9 +22,13 @@ public class Game {
 	
 	public Game() {
 		cup = new Cup();
-		board = new Board();
-		
+		board = new Board(this);
+
 		phaseManager = new PhaseManager(this);
+	}
+	
+	public Player getActivePlayer() {
+		return playerManager.getActivePlayer();
 	}
 	
 	public PhaseManager getPhaseManager() {
@@ -63,7 +67,7 @@ public class Game {
 			cup.removeThings(things);
 			
 			if (player.getRack().getThings().size() == NUM_INITIAL_THINGS) {
-				PhaseManager.getInstance().endPlayerTurn();
+				phaseManager.endPlayerTurn();
 			}
 			
 		}

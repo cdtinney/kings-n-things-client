@@ -59,7 +59,7 @@ public class GameController extends Controller {
 	
 	private void initializeSubControllers() {
 		boardController.initialize(game);
-		playerController.initialize(game.getPlayerManager().getPlayers());
+		playerController.initialize(game);
 		gameActionController.initialize(game);
 	}
 	

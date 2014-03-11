@@ -8,7 +8,7 @@ import javafx.event.Event;
 
 import com.kingsandthings.Controller;
 import com.kingsandthings.logging.LogLevel;
-import com.kingsandthings.model.Player;
+import com.kingsandthings.model.Game;
 import com.kingsandthings.model.board.Tile;
 import com.kingsandthings.model.things.Creature;
 import com.kingsandthings.model.things.Thing;
@@ -24,11 +24,11 @@ public class ExpandedTileController extends Controller {
 	// View
 	private ExpandedTileView view;
 	
-	public void initialize(List<Player> players) {
+	public void initialize(Game game) {
 		
-		view = new ExpandedTileView();
+		view = new ExpandedTileView(game);
 		
-		view.setPlayers(players);
+		view.setPlayers(game.getPlayerManager().getPlayers());
 		view.initialize();
 		view.setVisible(false);
 		

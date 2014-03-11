@@ -4,6 +4,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 import com.kingsandthings.game.board.BoardView;
+import com.kingsandthings.model.Game;
 import com.kingsandthings.model.Player;
 
 public class StartingKingdomsPhase extends Phase {
@@ -12,8 +13,8 @@ public class StartingKingdomsPhase extends Phase {
 	
 	private int initialNumGold = 10;
 	
-	public StartingKingdomsPhase() {
-		super("Starting Kingdoms", true, true, 2, true);
+	public StartingKingdomsPhase(Game game) {
+		super(game, "Starting Kingdoms", true, true, 2, true);
 	}
 	
 	public static BooleanProperty getActive() {
@@ -27,7 +28,7 @@ public class StartingKingdomsPhase extends Phase {
 		
 		BoardView.setInstructionText("please place a control marker");
 		
-		for (Player player: playerManager.getPlayers()) {
+		for (Player player: game.getPlayerManager().getPlayers()) {
 			
 			// Give each player 10 gold 
 			player.addGold(initialNumGold);
