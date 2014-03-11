@@ -1,6 +1,7 @@
 package com.kingsandthings;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javafx.geometry.HPos;
@@ -33,7 +34,7 @@ public class MainMenuView extends Scene implements InitializableView {
 	private VBox mainMenu; 
 	private VBox gameSettings;
 	
-	private List<TextField> playerNameFields;
+	private List<TextField> connectionFields;
 	
 	public MainMenuView() {
 		super(new BorderPane(), WIDTH, HEIGHT);
@@ -46,7 +47,7 @@ public class MainMenuView extends Scene implements InitializableView {
 	@Override
 	public void initialize() {
 		
-		playerNameFields = new ArrayList<TextField>();
+		connectionFields = new ArrayList<TextField>();
 		
 		initializeMainMenu();	
 		initializeGameSettings();	
@@ -57,27 +58,10 @@ public class MainMenuView extends Scene implements InitializableView {
 		
 	}
 	
-	public void setDefaultPlayerNames() {
+	public void setDefaultIPAndPort() {
 		
-		int i = 1;
-		for (TextField textField : playerNameFields) {
-			textField.setText("Player " + i++);
-		}
-		
-	}
-
-	public List<String> getPlayerNames() {
-		
-		if (playerNameFields == null) {
-			return null;
-		}
-		
-		List<String> names = new ArrayList<String>();
-		for (TextField textField : playerNameFields) {
-			names.add(textField.getText());
-		}
-		
-		return names;
+		connectionFields.get(0).setText("127.0.0.1");
+		connectionFields.get(1).setText("9000");
 		
 	}
 	
@@ -91,6 +75,8 @@ public class MainMenuView extends Scene implements InitializableView {
 	
 	public void displayGameSettings() { 
 		root.setCenter(gameSettings); 
+		
+		setDefaultIPAndPort();
 	}
 
 	private void initializeStatusText() {
@@ -115,8 +101,8 @@ public class MainMenuView extends Scene implements InitializableView {
 		
 		ImageView logoImg = new ImageView(new Image("/images/logo.png"));
 		
-		Button newGameButton = new Button("New Game");
-		newGameButton.setId("newGameButton");
+		Button newGameButton = new Button("Join Game");
+		newGameButton.setId("joinGameButton");
 		newGameButton.setPrefWidth(125);
 		
 		Button exitButton = new Button("Exit");
@@ -157,9 +143,9 @@ public class MainMenuView extends Scene implements InitializableView {
 		GridPane.setConstraints(playerNumLabel, 0, 0, 1, 1, HPos.CENTER, VPos.TOP);
 		GridPane.setConstraints(playerNumSlider, 1, 0);
 			
-		// Start button
-		Button startButton = new Button("Start");
-		startButton.setId("startButton");
+		// Join button
+		Button startButton = new Button("Join");
+		startButton.setId("joinButton");
 		startButton.setPrefWidth(150);
 		GridPane.setConstraints(startButton, 0, 2, 2, 1, HPos.CENTER, VPos.CENTER);
 		
@@ -175,30 +161,31 @@ public class MainMenuView extends Scene implements InitializableView {
 		// Add the settings grid to the VBox
 		gameSettings.getChildren().addAll(grid);
 		
-		// Add player fields
-		setPlayerFields(4);
+		addConnectionFields();
 	}
 	
-	private void setPlayerFields(int num) {
-		
+	private void addConnectionFields() {
+
 		GridPane grid = (GridPane) gameSettings.lookup("#settingsGrid");
 		
-		for (int i=0; i<num; ++i) {
-			
-			Label playerNameLabel = new Label("Name: ");
-			TextField playerNameField = new TextField();
-			
-			GridPane.setConstraints(playerNameLabel, 0, 1+i);
-			GridPane.setConstraints(playerNameField, 1, 1+i);
-			
-			playerNameFields.add(playerNameField);
-			
-			grid.getChildren().addAll(playerNameLabel, playerNameField);
-			
-		}
+		Label ipLabel = new Label("IP: ");
+		TextField ipField = new TextField();
+		
+		GridPane.setConstraints(ipLabel, 0, 1);
+		GridPane.setConstraints(ipField, 1, 1);
+		
+		Label portLabel = new Label("Port: ");
+		TextField portField = new TextField();
+		
+		GridPane.setConstraints(portLabel, 0, 2);
+		GridPane.setConstraints(portField, 1, 2);
+		
+		connectionFields.addAll(Arrays.asList(ipField, portField));
+		
+		grid.getChildren().addAll(ipLabel, ipField, portLabel, portField);
 
-		GridPane.setConstraints(gameSettings.lookup("#startButton"), 0, 2+num, 2, 1, HPos.CENTER, VPos.CENTER);
-		GridPane.setConstraints(gameSettings.lookup("#backButton"), 0, 3+num, 2, 1, HPos.CENTER, VPos.CENTER);
+		GridPane.setConstraints(gameSettings.lookup("#joinButton"), 0, 2+2, 2, 1, HPos.CENTER, VPos.CENTER);
+		GridPane.setConstraints(gameSettings.lookup("#backButton"), 0, 3+2, 2, 1, HPos.CENTER, VPos.CENTER);
 		
 	}
 	

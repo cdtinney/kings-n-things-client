@@ -1,5 +1,6 @@
 package com.kingsandthings;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -46,14 +47,14 @@ public class MainMenuController extends Controller {
 		
 		Parent root = view.getRoot();
 		
-		addEventHandler(root, "newGameButton", "setOnAction", "handleNewGameButtonAction");
+		addEventHandler(root, "joinGameButton", "setOnAction", "handleJoinGameButtonAction");
 		addEventHandler(root, "exitButton", "setOnAction", "handleExitButtonAction");
 		
 	}
 	
-	protected void handleStartButtonAction(Event event) {
+	protected void handleJoinButtonAction(Event event) {
 		
-		List<String> playerNames = view.getPlayerNames();
+		List<String> playerNames = new ArrayList<String>();
 		for (String name : playerNames) {
 			
 			if (name.trim().length() == 0) {
@@ -70,12 +71,11 @@ public class MainMenuController extends Controller {
 		gameController.initialize(stage, playerNames, this);
 	}
 	
-	protected void handleNewGameButtonAction(Event event) {
+	protected void handleJoinGameButtonAction(Event event) {
 		
 		view.displayGameSettings();
-		view.setDefaultPlayerNames();
 		
-		addEventHandler(view.getRoot(), "startButton", "setOnAction", "handleStartButtonAction");
+		addEventHandler(view.getRoot(), "joinButton", "setOnAction", "handleJoinButtonAction");
 		addEventHandler(view.getRoot(), "backButton", "setOnAction", "handleBackButtonAction");
 		
 	}
