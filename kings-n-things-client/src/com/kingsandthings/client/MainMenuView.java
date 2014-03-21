@@ -1,4 +1,4 @@
-package com.kingsandthings;
+package com.kingsandthings.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +22,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import com.kingsandthings.game.InitializableView;
+import com.kingsandthings.client.game.InitializableView;
 
 public class MainMenuView extends Scene implements InitializableView {
 	

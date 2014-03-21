@@ -1,4 +1,4 @@
-package com.kingsandthings.game.player;
+package com.kingsandthings.client.game.player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +12,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import com.kingsandthings.client.game.InitializableView;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.Thing;
-import com.kingsandthings.game.InitializableView;
 import com.kingsandthings.util.DataImageView;
 
 public class PlayerView extends Pane implements InitializableView {

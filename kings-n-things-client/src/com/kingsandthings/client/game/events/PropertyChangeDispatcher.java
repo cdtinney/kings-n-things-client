@@ -1,4 +1,4 @@
-package com.kingsandthings.game.events;
+package com.kingsandthings.client.game.events;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
 public class PropertyChangeDispatcher {
 	

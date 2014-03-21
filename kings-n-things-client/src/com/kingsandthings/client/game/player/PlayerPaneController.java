@@ -1,4 +1,4 @@
-package com.kingsandthings.game.player;
+package com.kingsandthings.client.game.player;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
@@ -14,12 +14,12 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 
+import com.kingsandthings.client.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.model.things.Thing;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.util.CustomDataFormat;
 import com.kingsandthings.util.DataImageView;
 

@@ -1,4 +1,4 @@
-package com.kingsandthings.game.board;
+package com.kingsandthings.client.game.board;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,11 +17,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBuilder;
 
+import com.kingsandthings.client.game.InitializableView;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.things.Thing;
-import com.kingsandthings.game.InitializableView;
 import com.kingsandthings.util.DataImageView;
 
 public class ExpandedTileView extends VBox implements InitializableView {

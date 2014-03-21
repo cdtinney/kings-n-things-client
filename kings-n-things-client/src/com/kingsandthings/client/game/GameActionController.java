@@ -1,4 +1,4 @@
-package com.kingsandthings.game;
+package com.kingsandthings.client.game;
 
 import java.util.List;
 import java.util.logging.Logger;

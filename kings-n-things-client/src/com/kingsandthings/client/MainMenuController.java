@@ -1,4 +1,4 @@
-package com.kingsandthings;
+package com.kingsandthings.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,10 +9,10 @@ import javafx.event.Event;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 
+import com.kingsandthings.client.game.GameController;
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.network.GameClientImpl;
-import com.kingsandthings.game.GameController;
 import com.kingsandthings.util.Dialog;
 
 public class MainMenuController extends Controller {

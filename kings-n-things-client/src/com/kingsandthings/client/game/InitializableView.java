@@ -1,4 +1,4 @@
-package com.kingsandthings.game;
+package com.kingsandthings.client.game;
 
 public interface InitializableView {
 	

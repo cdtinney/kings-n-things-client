@@ -1,4 +1,4 @@
-package com.kingsandthings.game;
+package com.kingsandthings.client.game;
 
 import java.beans.PropertyChangeEvent;
 

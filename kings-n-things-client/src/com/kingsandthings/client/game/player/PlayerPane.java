@@ -1,4 +1,4 @@
-package com.kingsandthings.game.player;
+package com.kingsandthings.client.game.player;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
@@ -7,13 +7,13 @@ import java.util.List;
 import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;
 
+import com.kingsandthings.client.game.InitializableView;
+import com.kingsandthings.client.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.model.Rack;
 import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.Thing;
-import com.kingsandthings.game.InitializableView;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
 public class PlayerPane extends VBox implements InitializableView {
 	

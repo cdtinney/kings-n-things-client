@@ -1,15 +1,15 @@
-package com.kingsandthings.game;
+package com.kingsandthings.client.game;
 
 import java.util.List;
 import java.util.logging.Logger;
 
 import javafx.stage.Stage;
 
-import com.kingsandthings.MainMenuController;
+import com.kingsandthings.client.MainMenuController;
+import com.kingsandthings.client.game.board.BoardController;
+import com.kingsandthings.client.game.player.PlayerPaneController;
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.Game;
-import com.kingsandthings.game.board.BoardController;
-import com.kingsandthings.game.player.PlayerPaneController;
 
 public class GameController extends Controller {
 	
