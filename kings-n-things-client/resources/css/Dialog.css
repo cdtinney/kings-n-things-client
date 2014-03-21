@@ -1,0 +1,18 @@
+.dialog {
+  -fx-glass-color: white;
+  -fx-opacity: 0.95;
+  
+  -fx-background-color: linear-gradient(to bottom, derive(-fx-glass-color, 20%), -fx-glass-color);
+}
+
+.dialogContent {
+	-fx-padding: 10px;
+	-fx-spacing: 10px;
+	-fx-alignment: center;
+	-fx-text-alignment: left;
+	-fx-font-size: 16;
+}
+
+.dialogContent .button {
+	-fx-font-size: 12;
+}
