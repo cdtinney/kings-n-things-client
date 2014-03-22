@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import com.kingsandthings.client.game.GameController;
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.PlayerManager;
-import com.kingsandthings.common.network.GameClientImpl;
+import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.common.network.NetworkObjectHandler;
 import com.kingsandthings.util.Dialog;
 
@@ -28,7 +28,7 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 	private GameController gameController = new GameController();
 	
 	// Networking
-	private GameClientImpl client;
+	private GameClient client;
 	
 	public void initialize(Stage stage) {
 		
@@ -70,7 +70,7 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 			return;
 		}
 		
-		client = new GameClientImpl(playerName);
+		client = new GameClient(playerName);
 		client.getHandlers().add(this);
 		client.start(view.getIP(),  view.getPort());
 		
