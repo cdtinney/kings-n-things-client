@@ -57,11 +57,21 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 		if (object instanceof Status) {
 			
 			Status status = (Status) object;
-
-			if (status == Status.PLAYER_CONNECTED) {
-				onConnectionChange(true);
-			} else if (status == Status.PLAYER_DISCONNECTED) {
-				onConnectionChange(false);
+			
+			switch (status) {
+			
+				case PLAYER_CONNECTED:
+					onConnectionChange(true);
+					break;
+				case ALL_PLAYERS_NOT_CONNECTED:
+					onAllPlayersConnected(false);
+					break;
+				case ALL_PLAYERS_CONNECTED:
+					onAllPlayersConnected(true);
+					break;
+				default:
+					break;
+					
 			}
 					
 		}
@@ -102,6 +112,16 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 	
 	protected void handleExitButtonAction(Event event) {
 		stage.close();
+	}
+	
+	private void onAllPlayersConnected(boolean connected) {
+		
+		if (connected) {
+			view.setStatusText("all players connected. waiting for game to start...");
+		} else {
+			view.setStatusText("connected. waiting for other players to connect...");
+		}
+		
 	}
 	
 	private void onConnectionChange(boolean connected) {
