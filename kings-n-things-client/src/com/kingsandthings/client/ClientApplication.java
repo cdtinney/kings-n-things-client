@@ -31,12 +31,13 @@ public class ClientApplication extends Application {
 	
 	@Override
 	public void stop() {
+		mainMenuController.stop();
 		LOGGER.info("Application has stopped.");
 	}
 	
 	public static void main(String[] args) {
 		
-		LogHandler.setup(LOGGER);
+		LogHandler.setHandler(LOGGER);
 		
 		launch(args);
 	}

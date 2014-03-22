@@ -45,6 +45,10 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 		setupHandlers();
 		
 	}
+	
+	public void stop() {
+		client.end();
+	}
 
 	@Override
 	public void handleObject(Object object) {
