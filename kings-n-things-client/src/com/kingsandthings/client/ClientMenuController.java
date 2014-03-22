@@ -11,6 +11,7 @@ import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.common.network.NetworkObjectHandler;
+import com.kingsandthings.common.network.NetworkRegistry.Status;
 import com.kingsandthings.util.Dialog;
 
 public class ClientMenuController extends Controller implements NetworkObjectHandler {
@@ -42,7 +43,7 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 		stage.setScene(view);
 		stage.centerOnScreen();
 		
-		setupHandlers();
+		addEventHandlers();
 		
 	}
 	
@@ -53,16 +54,19 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 	@Override
 	public void handleObject(Object object) {
 		
+		if (object instanceof Status) {
+			
+			Status status = (Status) object;
+
+			if (status == Status.PLAYER_CONNECTED) {
+				onConnectionChange(true);
+			} else if (status == Status.PLAYER_DISCONNECTED) {
+				onConnectionChange(false);
+			}
+					
+		}
+		
 		System.out.println("controller received " + object);
-		
-	}
-	
-	private void setupHandlers() {
-		
-		Parent root = view.getRoot();
-		
-		addEventHandler(root, "joinGameButton", "setOnAction", "handleJoinGameButtonAction");
-		addEventHandler(root, "exitButton", "setOnAction", "handleExitButtonAction");
 		
 	}
 	
@@ -77,6 +81,9 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 		client = new GameClient(playerName);
 		client.getHandlers().add(this);
 		client.start(view.getIP(),  view.getPort());
+		
+		view.setStatusText("waiting to connect...");
+		view.setEnabled(false);
 		
 	}
 	
@@ -95,6 +102,26 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 	
 	protected void handleExitButtonAction(Event event) {
 		stage.close();
+	}
+	
+	private void onConnectionChange(boolean connected) {
+		
+		if (connected) {
+			view.setStatusText("connected. waiting for other players to connect...");
+		} else {
+			view.setStatusText("disconnected");
+			view.setEnabled(true);
+		}
+		
+	}
+	
+	private void addEventHandlers() {
+		
+		Parent root = view.getRoot();
+		
+		addEventHandler(root, "joinGameButton", "setOnAction", "handleJoinGameButtonAction");
+		addEventHandler(root, "exitButton", "setOnAction", "handleExitButtonAction");
+		
 	}
 	
 }

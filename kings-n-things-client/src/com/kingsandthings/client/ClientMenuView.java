@@ -11,7 +11,6 @@ import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -84,6 +83,19 @@ public class ClientMenuView extends Scene implements InitializableView {
 		setDefaultIPAndPort();
 	}
 	
+	public void setEnabled(boolean enabled) {
+		
+		((TextField) root.lookup("#name")).setDisable(!enabled);
+		
+		for (TextField field : connectionFields) {
+			field.setDisable(!enabled);
+		}
+
+		((Button) root.lookup("#joinButton")).setDisable(!enabled);
+		((Button) root.lookup("#backButton")).setDisable(!enabled);
+		
+	}
+	
 	private void setDefaultIPAndPort() {
 		
 		connectionFields.get(0).setText("127.0.0.1");
@@ -131,29 +143,12 @@ public class ClientMenuView extends Scene implements InitializableView {
 		gameSettings.setStyle("-fx-background-color: #FFFFFF");
 		gameSettings.setAlignment(Pos.CENTER);
 	
-		// Initialize grid for settings
+		// Initialize grid for button
 		GridPane grid = new GridPane();
 		grid.setId("settingsGrid");
 		grid.setAlignment(Pos.TOP_CENTER);
 		grid.setHgap(10);
 		grid.setVgap(20);
-		
-		// Player number label and slider
-		Label playerNumLabel = new Label("Number of Players:");
-		Slider playerNumSlider = new Slider(2, 4, 0);
-		playerNumSlider.setId("playerNum");
-		playerNumSlider.setMinorTickCount(0);
-		playerNumSlider.setMajorTickUnit(1);
-		playerNumSlider.setSnapToTicks(true);
-		playerNumSlider.setShowTickMarks(true);
-		playerNumSlider.setShowTickLabels(true);
-		
-		// Set to 4 and disable for now
-		playerNumSlider.setValue(4);
-		playerNumSlider.setDisable(true);
-		
-		GridPane.setConstraints(playerNumLabel, 0, 0, 1, 1, HPos.CENTER, VPos.TOP);
-		GridPane.setConstraints(playerNumSlider, 1, 0);
 			
 		// Join button
 		Button startButton = new Button("Join");
@@ -167,8 +162,8 @@ public class ClientMenuView extends Scene implements InitializableView {
 		backButton.setPrefWidth(150);
 		GridPane.setConstraints(backButton, 0, 3, 2, 1, HPos.CENTER, VPos.CENTER);
 		
-		// Add labels and controls to grid
-		grid.getChildren().addAll(playerNumLabel, playerNumSlider, startButton, backButton);	
+		// Add controls to grid
+		grid.getChildren().addAll(startButton, backButton);	
 		
 		// Add the settings grid to the VBox
 		gameSettings.getChildren().addAll(grid);
