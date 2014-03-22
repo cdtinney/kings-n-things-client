@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 import javafx.stage.Stage;
 
-import com.kingsandthings.client.MainMenuController;
+import com.kingsandthings.client.ClientMenuController;
 import com.kingsandthings.client.game.board.BoardController;
 import com.kingsandthings.client.game.player.PlayerPaneController;
 import com.kingsandthings.common.controller.Controller;
@@ -27,7 +27,7 @@ public class GameController extends Controller {
 	private PlayerPaneController playerController;
 	private GameActionController gameActionController;
 	
-	public void initialize(Stage stage, List<String> playerNames, MainMenuController parent) {
+	public void initialize(Stage stage, List<String> playerNames, ClientMenuController parent) {
 		
 		view = new GameView();
 		view.initialize();

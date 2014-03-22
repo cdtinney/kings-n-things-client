@@ -11,7 +11,6 @@ import javax.management.Notification;
 import javax.management.NotificationListener;
 
 import com.kingsandthings.common.model.phase.Phase;
-import com.kingsandthings.game.events.NotificationDispatcher;
 
 public class NotificationDispatcher {
 	

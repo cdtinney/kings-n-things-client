@@ -24,7 +24,7 @@ import javafx.scene.text.Text;
 
 import com.kingsandthings.client.game.InitializableView;
 
-public class MainMenuView extends Scene implements InitializableView {
+public class ClientMenuView extends Scene implements InitializableView {
 	
 	private final static int WIDTH = 600;
 	private final static int HEIGHT = 400;
@@ -36,7 +36,7 @@ public class MainMenuView extends Scene implements InitializableView {
 	
 	private List<TextField> connectionFields;
 	
-	public MainMenuView() {
+	public ClientMenuView() {
 		super(new BorderPane(), WIDTH, HEIGHT);
 		
 		root = (BorderPane) getRoot();
@@ -58,19 +58,16 @@ public class MainMenuView extends Scene implements InitializableView {
 		
 	}
 	
-	public void setDefaultIPAndPort() {
-		
-		connectionFields.get(0).setText("127.0.0.1");
-		connectionFields.get(1).setText("9000");
-		
-	}
-	
 	public String getIP() {
 		return ((TextField) root.lookup("#ip")).getText();
 	}
 	
 	public Integer getPort() {
 		return Integer.parseInt(((TextField) root.lookup("#port")).getText());
+	}
+	
+	public String getName() {
+		return ((TextField) root.lookup("#name")).getText();
 	}
 	
 	public void setStatusText(String text) {
@@ -85,6 +82,13 @@ public class MainMenuView extends Scene implements InitializableView {
 		root.setCenter(gameSettings); 
 		
 		setDefaultIPAndPort();
+	}
+	
+	private void setDefaultIPAndPort() {
+		
+		connectionFields.get(0).setText("127.0.0.1");
+		connectionFields.get(1).setText("9000");
+		
 	}
 
 	private void initializeStatusText() {
@@ -176,26 +180,33 @@ public class MainMenuView extends Scene implements InitializableView {
 
 		GridPane grid = (GridPane) gameSettings.lookup("#settingsGrid");
 		
+		Label nameLabel = new Label("Name: ");
+		TextField nameField = new TextField();
+		nameField.setId("name");
+		
+		GridPane.setConstraints(nameLabel, 0, 1);
+		GridPane.setConstraints(nameField, 1, 1);
+		
 		Label ipLabel = new Label("IP: ");
 		TextField ipField = new TextField();
 		ipField.setId("ip");
 		
-		GridPane.setConstraints(ipLabel, 0, 1);
-		GridPane.setConstraints(ipField, 1, 1);
+		GridPane.setConstraints(ipLabel, 0, 2);
+		GridPane.setConstraints(ipField, 1, 2);
 		
 		Label portLabel = new Label("Port: ");
 		TextField portField = new TextField();
 		portField.setId("port");
 		
-		GridPane.setConstraints(portLabel, 0, 2);
-		GridPane.setConstraints(portField, 1, 2);
+		GridPane.setConstraints(portLabel, 0, 3);
+		GridPane.setConstraints(portField, 1, 3);
 		
 		connectionFields.addAll(Arrays.asList(ipField, portField));
 		
-		grid.getChildren().addAll(ipLabel, ipField, portLabel, portField);
+		grid.getChildren().addAll(nameLabel, nameField, ipLabel, ipField, portLabel, portField);
 
-		GridPane.setConstraints(gameSettings.lookup("#joinButton"), 0, 2+2, 2, 1, HPos.CENTER, VPos.CENTER);
-		GridPane.setConstraints(gameSettings.lookup("#backButton"), 0, 3+2, 2, 1, HPos.CENTER, VPos.CENTER);
+		GridPane.setConstraints(gameSettings.lookup("#joinButton"), 0, 2+3, 2, 1, HPos.CENTER, VPos.CENTER);
+		GridPane.setConstraints(gameSettings.lookup("#backButton"), 0, 3+3, 2, 1, HPos.CENTER, VPos.CENTER);
 		
 	}
 	

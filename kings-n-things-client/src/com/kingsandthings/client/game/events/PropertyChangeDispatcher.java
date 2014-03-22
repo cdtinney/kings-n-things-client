@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
 public class PropertyChangeDispatcher {
 	

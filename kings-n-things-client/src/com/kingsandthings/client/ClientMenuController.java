@@ -1,8 +1,5 @@
 package com.kingsandthings.client;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javafx.event.Event;
@@ -13,9 +10,10 @@ import com.kingsandthings.client.game.GameController;
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.network.GameClientImpl;
+import com.kingsandthings.common.network.NetworkObjectHandler;
 import com.kingsandthings.util.Dialog;
 
-public class MainMenuController extends Controller {
+public class ClientMenuController extends Controller implements NetworkObjectHandler {
 	
 	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(PlayerManager.class.getName());
@@ -24,7 +22,7 @@ public class MainMenuController extends Controller {
 	private Stage stage;
 	
 	// View
-	private MainMenuView view;
+	private ClientMenuView view;
 	
 	// Sub-controllers
 	private GameController gameController = new GameController();
@@ -38,13 +36,20 @@ public class MainMenuController extends Controller {
 		
 		Dialog.setStage(stage);
 		
-		view = new MainMenuView();
+		view = new ClientMenuView();
 		view.initialize();
 		
 		stage.setScene(view);
 		stage.centerOnScreen();
 		
 		setupHandlers();
+		
+	}
+
+	@Override
+	public void handleObject(Object object) {
+		
+		System.out.println("controller received " + object);
 		
 	}
 	
@@ -59,34 +64,16 @@ public class MainMenuController extends Controller {
 	
 	protected void handleJoinButtonAction(Event event) {
 		
-		List<String> playerNames = new ArrayList<String>();
-		for (String name : playerNames) {
-			
-			if (name.trim().length() == 0) {
-				view.setStatusText("one or more player names are empty");
-				return;
-			}
-			
+		String playerName = view.getName();
+		if (playerName == null || playerName.trim().length() == 0) {
+			view.setStatusText("invalid player name");
+			return;
 		}
 		
-		if (playerNames.size() == 0) {
-			playerNames.addAll(Arrays.asList("Player 1", "Player 2", "Player 3", "Player 4"));
-		}
+		client = new GameClientImpl(playerName);
+		client.getHandlers().add(this);
+		client.start(view.getIP(),  view.getPort());
 		
-		client = new GameClientImpl(view.getIP(), view.getPort());
-		
-		synchronized (client.getConnectedLock()) {
-
-			try {
-				client.getConnectedLock().wait();
-				gameController.initialize(stage, playerNames, this);
-				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				
-			}
-			
-		}
 	}
 	
 	protected void handleJoinGameButtonAction(Event event) {

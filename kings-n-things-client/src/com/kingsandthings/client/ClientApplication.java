@@ -8,13 +8,13 @@ import javafx.stage.Stage;
 
 import com.kingsandthings.logging.LogHandler;
 
-public class MainApplication extends Application {
+public class ClientApplication extends Application {
 	
-	private static Logger LOGGER = Logger.getLogger(MainApplication.class.getName());
+	private static Logger LOGGER = Logger.getLogger(ClientApplication.class.getName());
 	
 	private final float VERSION = 0.2f;
 	
-	private MainMenuController mainMenuController = new MainMenuController();
+	private ClientMenuController mainMenuController = new ClientMenuController();
 	
 	@Override
 	public void start(Stage primaryStage) {
