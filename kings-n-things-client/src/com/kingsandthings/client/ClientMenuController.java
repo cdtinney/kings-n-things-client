@@ -2,6 +2,7 @@ package com.kingsandthings.client;
 
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
@@ -11,7 +12,8 @@ import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.common.network.NetworkObjectHandler;
-import com.kingsandthings.common.network.NetworkRegistry.Status;
+import com.kingsandthings.common.network.NetworkRegistry.ConnectionStatus;
+import com.kingsandthings.common.network.NetworkRegistry.InitializeGame;
 import com.kingsandthings.util.Dialog;
 
 public class ClientMenuController extends Controller implements NetworkObjectHandler {
@@ -48,38 +50,28 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 	}
 	
 	public void stop() {
-		client.end();
+		
+		if (client != null) {
+			client.end();
+		}
+		
 	}
 
 	@Override
 	public void handleObject(Object object) {
 		
-		if (object instanceof Status) {
-			
-			Status status = (Status) object;
-			
-			switch (status) {
-			
-				case PLAYER_CONNECTED:
-					onConnectionChange(true);
-					break;
-				case ALL_PLAYERS_NOT_CONNECTED:
-					onAllPlayersConnected(false);
-					break;
-				case ALL_PLAYERS_CONNECTED:
-					onAllPlayersConnected(true);
-					break;
-				default:
-					break;
-					
-			}
-					
+		if (object instanceof ConnectionStatus) {
+			handleStatusMessage((ConnectionStatus) object);
+		}
+		
+		if (object instanceof InitializeGame) {
+			handleInitializeGame((InitializeGame) object);
 		}
 		
 		System.out.println("controller received " + object);
 		
 	}
-	
+
 	protected void handleJoinButtonAction(Event event) {
 		
 		String playerName = view.getName();
@@ -112,6 +104,42 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 	
 	protected void handleExitButtonAction(Event event) {
 		stage.close();
+	}
+	
+	private void handleInitializeGame(final InitializeGame initializeGame) {
+		
+		final ClientMenuController instance = this;
+		
+		// Run on the JavaFX thread
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				gameController.initialize(stage, initializeGame.game, instance);
+			}
+		
+		});
+		
+	}
+	
+	private void handleStatusMessage(ConnectionStatus status) {
+		
+		switch (status) {
+		
+			case PLAYER_CONNECTED:
+				onConnectionChange(true);
+				break;
+			case ALL_PLAYERS_NOT_CONNECTED:
+				onAllPlayersConnected(false);
+				break;
+			case ALL_PLAYERS_CONNECTED:
+				onAllPlayersConnected(true);
+				break;
+			default:
+				break;
+				
+		}
+		
 	}
 	
 	private void onAllPlayersConnected(boolean connected) {

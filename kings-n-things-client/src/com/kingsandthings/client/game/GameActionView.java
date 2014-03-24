@@ -231,8 +231,7 @@ public class GameActionView extends VBox implements InitializableView {
 		
 		VBox.setMargin(phaseName, new Insets(100, 0, 0, 15));
 		
-		String currentPhaseName = game.getPhaseManager().getCurrentPhase().getName();
-		phaseName.setText("Current Phase: " + currentPhaseName);
+		phaseName.setText("Current Phase: none");
 		
 		HBox buttons = new HBox(5);
 		buttons.setAlignment(Pos.CENTER);
@@ -241,7 +240,8 @@ public class GameActionView extends VBox implements InitializableView {
 		endTurnButton.setId("endTurn");
 		endTurnButton.getStyleClass().add("nofocus");
 		
-		endTurnButton.setDisable(game.getPhaseManager().getCurrentPhase().isMandatory());
+		// TODO - disable end turn button appropriately
+		//endTurnButton.setDisable(game.getPhaseManager().getCurrentPhase().isMandatory());
 		
 		buttons.getChildren().addAll(endTurnButton);
 		

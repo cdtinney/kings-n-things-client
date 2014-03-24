@@ -1,6 +1,5 @@
 package com.kingsandthings.client.game;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import javafx.stage.Stage;
@@ -27,14 +26,12 @@ public class GameController extends Controller {
 	private PlayerPaneController playerController;
 	private GameActionController gameActionController;
 	
-	public void initialize(Stage stage, List<String> playerNames, ClientMenuController parent) {
+	public void initialize(Stage stage, Game game, ClientMenuController parent) {
 		
 		view = new GameView();
 		view.initialize();
 		
-		// Instantiate model
-		game = new Game();
-		game.addPlayers(playerNames);
+		this.game = game;
 		
 		boardController = new BoardController();
 		playerController = new PlayerPaneController();
@@ -47,9 +44,6 @@ public class GameController extends Controller {
 		stage.centerOnScreen();
 		
 		addEventHandler(view.getRoot(), "quitGameMenuItem", "setOnAction", "handleQuitGameMenuItemAction");
-		
-		// Start the game
-		game.begin();
 		
 	}
 	

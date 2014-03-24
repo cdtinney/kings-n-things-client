@@ -156,16 +156,13 @@ public class PlayerView extends Pane implements InitializableView {
 	
 	private void update() {
 		
-		// TODO
-//		if (PlayerManager.getInstance().getActivePlayer() == player) {
-//			setActive(true);
-//		}
-		
 		setNumGoldText(player.getNumGold());
 		setPlayerName(player.getName());
-		setControlMarkerImage(player.getControlMarker());
-		setRackThings(player.getRack().getThings());
-		setFortThings(player.getForts());
+
+		// TODO - update player view differently for other players
+//		setControlMarkerImage(player.getControlMarker());
+//		setRackThings(player.getRack().getThings());
+//		setFortThings(player.getForts());
 		
 	}
 
