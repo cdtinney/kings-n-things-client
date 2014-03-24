@@ -60,7 +60,7 @@ public class BoardController extends Controller {
 		// Add the expanded tile view to the board view (initially not visible)
 		boardView.getChildren().add(expandedTileController.getView());
 		
-		// Set up starting tiles (TASK - this should be done based on player dice rolls)
+		// Set up starting tiles
 		for (Player player : players) {
 			int pos = game.getPlayerManager().getPosition(player);
 			board.setStartingTile(player, pos);
@@ -109,7 +109,7 @@ public class BoardController extends Controller {
 				addEventHandler(tileView, "setOnDragDropped", "handleTileDragDropped");
 				addEventHandler(tileView, "setOnDragExited", "handleTileDragExit");
 				
-				// Action menu (TODO - Refactor. Too many event handlers..
+				// Action menu (TODO - Refactor. Too many event handlers.
 				addEventHandler(tileView.getActionMenu().get("placeControlMarker"), "setOnAction", "handlePlaceControlMarkerMenuItem");
 				addEventHandler(tileView.getActionMenu().get("selectThings"), "setOnAction", "handleSelectThings");
 				

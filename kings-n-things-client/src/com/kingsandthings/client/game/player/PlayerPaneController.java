@@ -66,7 +66,7 @@ public class PlayerPaneController extends Controller {
 				addEventHandler(rackImage, "setOnDragDetected", "handleThingDragDetected");
 				addEventHandler(rackImage, "setOnDragDone", "handleThingDragDone");
 				
-				// TASK - Abstract this
+				// TASK - Abstract this (consuming events depending on active player and phase)
 				rackImage.addEventFilter(Event.ANY, new EventHandler<Event> (){
 
 					@Override

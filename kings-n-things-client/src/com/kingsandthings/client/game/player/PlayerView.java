@@ -89,7 +89,6 @@ public class PlayerView extends Pane implements InitializableView {
 
 		DataImageView.clear(fortImages, true);
 		
-		// TASK - fix this (by removing Fort from the view)
 		if (forts.size() > fortImages.size()) {
 			return;
 		}
@@ -169,11 +168,10 @@ public class PlayerView extends Pane implements InitializableView {
 	private void addFortsVBox() {
 		
 		fortsVBox = VBoxBuilder.create().spacing(4).layoutX(FORTS_X).layoutY(FORTS_Y).build();	
-		
-		// TASK - figure out how to add event handlers dynamically		
-		DataImageView test = new DataImageView(true, RACK_ITEM_WIDTH);
-		fortImages.add(test);
-		fortsVBox.getChildren().add(test);
+			
+		DataImageView imageView = new DataImageView(true, RACK_ITEM_WIDTH);
+		fortImages.add(imageView);
+		fortsVBox.getChildren().add(imageView);
 		
 		getChildren().add(fortsVBox);
 		
