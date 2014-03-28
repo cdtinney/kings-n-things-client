@@ -109,10 +109,12 @@ public class GameActionView extends VBox implements InitializableView {
 	}
 	
 	private void addListeners() {
+		
 		PropertyChangeDispatcher.getInstance().addListener(PhaseManager.class, "currentPhase", this, "onPhaseChanged");
 		
 		NotificationDispatcher.getInstance().addListener(ThingRecruitmentPhase.class, Phase.Notification.STEP, this, "onRecruitmentPhaseStep");
 		NotificationDispatcher.getInstance().addListener(InitialPlacementPhase.class, Phase.Notification.STEP, this, "onInitialPlacementStep");
+		
 	}
 	
 	private void bindElements() {
