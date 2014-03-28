@@ -1,5 +1,6 @@
 package com.kingsandthings.client;
 
+import java.beans.PropertyChangeEvent;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
@@ -12,13 +13,13 @@ import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.common.network.NetworkObjectHandler;
-import com.kingsandthings.common.network.NetworkRegistry.ConnectionStatus;
 import com.kingsandthings.common.network.NetworkRegistry.InitializeGame;
+import com.kingsandthings.common.network.NetworkRegistry.NetworkPlayerStatus;
+import com.kingsandthings.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.util.Dialog;
 
 public class ClientMenuController extends Controller implements NetworkObjectHandler {
 	
-	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(PlayerManager.class.getName());
 	
 	// Primary stage
@@ -46,6 +47,7 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 		stage.centerOnScreen();
 		
 		addEventHandlers();
+		addListeners();
 		
 	}
 	
@@ -60,15 +62,15 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 	@Override
 	public void handleObject(Object object) {
 		
-		if (object instanceof ConnectionStatus) {
-			handleStatusMessage((ConnectionStatus) object);
+		if (object instanceof NetworkPlayerStatus) {
+			handleStatusMessage((NetworkPlayerStatus) object);
 		}
 		
 		if (object instanceof InitializeGame) {
 			handleInitializeGame((InitializeGame) object);
 		}
 		
-		System.out.println("controller received " + object);
+		LOGGER.info("Received " + object);
 		
 	}
 
@@ -116,19 +118,17 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 			@Override
 			public void run() {
 				gameController.initialize(stage, initializeGame.game, instance);
+				client.send(NetworkPlayerStatus.PLAYER_INITIALIZED);
 			}
 		
 		});
 		
 	}
 	
-	private void handleStatusMessage(ConnectionStatus status) {
+	private void handleStatusMessage(NetworkPlayerStatus status) {
 		
 		switch (status) {
 		
-			case PLAYER_CONNECTED:
-				onConnectionChange(true);
-				break;
 			case ALL_PLAYERS_NOT_CONNECTED:
 				onAllPlayersConnected(false);
 				break;
@@ -142,23 +142,30 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 		
 	}
 	
-	private void onAllPlayersConnected(boolean connected) {
+	@SuppressWarnings("unused")
+	private void onConnectionChange(PropertyChangeEvent evt) {
+		
+		boolean connected = (boolean) evt.getNewValue();
 		
 		if (connected) {
-			view.setStatusText("all players connected. waiting for game to start...");
-		} else {
 			view.setStatusText("connected. waiting for other players to connect...");
+			
+		} else {
+			view.setStatusText("disconnected");
+			view.setEnabled(true);
+			
 		}
 		
 	}
 	
-	private void onConnectionChange(boolean connected) {
+	private void onAllPlayersConnected(boolean connected) {
 		
 		if (connected) {
-			view.setStatusText("connected. waiting for other players to connect...");
+			view.setStatusText("all players connected. waiting for game to start...");
+			
 		} else {
-			view.setStatusText("disconnected");
-			view.setEnabled(true);
+			view.setStatusText("connected. waiting for other players to connect...");
+			
 		}
 		
 	}
@@ -169,6 +176,12 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 		
 		addEventHandler(root, "joinGameButton", "setOnAction", "handleJoinGameButtonAction");
 		addEventHandler(root, "exitButton", "setOnAction", "handleExitButtonAction");
+		
+	}
+	
+	private void addListeners() {
+
+		PropertyChangeDispatcher.getInstance().addListener(GameClient.class, "connected", this, "onConnectionChange");
 		
 	}
 	

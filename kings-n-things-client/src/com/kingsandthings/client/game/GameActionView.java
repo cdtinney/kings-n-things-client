@@ -21,13 +21,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-import com.kingsandthings.client.game.events.NotificationDispatcher;
-import com.kingsandthings.client.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.phase.InitialPlacementPhase;
 import com.kingsandthings.common.model.phase.Phase;
 import com.kingsandthings.common.model.phase.PhaseManager;
 import com.kingsandthings.common.model.phase.ThingRecruitmentPhase;
+import com.kingsandthings.game.events.NotificationDispatcher;
+import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
 public class GameActionView extends VBox implements InitializableView {
 
@@ -222,7 +222,7 @@ public class GameActionView extends VBox implements InitializableView {
 	
 	private void addPhaseActions() {
 		
-		Label phaseName = new Label();
+		Label phaseName = new Label("Current Phase: none");
 		phaseName.setFont(Font.font("Lucida Sans", 12));
 		phaseName.setTextFill(Color.WHITE);
 		phaseName.setId("phaseName");
@@ -231,17 +231,13 @@ public class GameActionView extends VBox implements InitializableView {
 		
 		VBox.setMargin(phaseName, new Insets(100, 0, 0, 15));
 		
-		phaseName.setText("Current Phase: none");
-		
 		HBox buttons = new HBox(5);
 		buttons.setAlignment(Pos.CENTER);
 		
 		Button endTurnButton = new Button("End Turn");
 		endTurnButton.setId("endTurn");
 		endTurnButton.getStyleClass().add("nofocus");
-		
-		// TODO - disable end turn button appropriately
-		//endTurnButton.setDisable(game.getPhaseManager().getCurrentPhase().isMandatory());
+		endTurnButton.setDisable(true);
 		
 		buttons.getChildren().addAll(endTurnButton);
 		

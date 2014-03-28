@@ -12,14 +12,13 @@ import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 
-import com.kingsandthings.client.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
-import com.kingsandthings.common.model.board.Board;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.things.Thing;
+import com.kingsandthings.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.logging.LogLevel;
 import com.kingsandthings.util.CustomDataFormat;
 
@@ -29,7 +28,6 @@ public class BoardController extends Controller {
 
 	// Model
 	private Game game;
-	private Board board;
 	private List<Thing> selectedThings;
 	
 	private Tile initialMovementTile;
@@ -44,14 +42,11 @@ public class BoardController extends Controller {
 	public void initialize(Game game) {
 
 		this.game = game;
-		board = game.getBoard();
-		
-		List<Player> players = game.getPlayerManager().getPlayers();
 		
 		// Initialize views and set the tiles
 		boardView = new BoardView();
-		boardView.initialize();
-		boardView.setTileImages(board.getTiles());
+		boardView.initialize();		
+		boardView.setTileImages(game.getBoard().getTiles());
 		
 		// Initialize the expand tile controller
 		expandedTileController = new ExpandedTileController();
@@ -59,12 +54,6 @@ public class BoardController extends Controller {
 		
 		// Add the expanded tile view to the board view (initially not visible)
 		boardView.getChildren().add(expandedTileController.getView());
-		
-		// Set up starting tiles
-		for (Player player : players) {
-			int pos = game.getPlayerManager().getPosition(player);
-			board.setStartingTile(player, pos);
-		}
 		
 		// Set up event handlers for clicking tiles
 		setupTileClickHandlers();
@@ -153,7 +142,7 @@ public class BoardController extends Controller {
 		
 		Player player = game.getActivePlayer();
 		
-		if (board.setTileControl(tileView.getTile(), player, true)) {
+		if (game.getBoard().setTileControl(tileView.getTile(), player, true)) {
 			game.getPhaseManager().endPlayerTurn();
 		}
 		
@@ -202,7 +191,7 @@ public class BoardController extends Controller {
 			things.get(i).setImage(new Image(imageUrls.get(i)));
 		}
 		
-		boolean success = board.addThingsToTile(tile, things);
+		boolean success = game.getBoard().addThingsToTile(tile, things);
 		
 		dragEvent.setDropCompleted(success);
 		dragEvent.consume();
@@ -237,17 +226,17 @@ public class BoardController extends Controller {
 				int roll = 1;
 				//int roll = board.rollDice(1);
 				
-				board.moveThingsToUnexploredTile(roll, initialMovementTile, tile, selectedThings);
+				game.getBoard().moveThingsToUnexploredTile(roll, initialMovementTile, tile, selectedThings);
 				
 				BoardView.setInstructionText("do some movement");
 				
 			} else {
-				board.moveThings(initialMovementTile, tile, selectedThings);
+				game.getBoard().moveThings(initialMovementTile, tile, selectedThings);
 				
 			}
 			
 			Player player = game.getActivePlayer();
-			if (!board.movementPossible(player)) {
+			if (!game.getBoard().movementPossible(player)) {
 				BoardView.setInstructionText("no more movement possible! please end turn");
 			}
 

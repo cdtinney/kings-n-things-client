@@ -18,8 +18,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import com.kingsandthings.client.game.InitializableView;
-import com.kingsandthings.client.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.model.board.Tile;
+import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
 public class BoardView extends Pane implements InitializableView {
 	
