@@ -50,6 +50,7 @@ public class PlayerPaneController extends Controller implements Updatable {
 		
 		view = new PlayerPane(game.getPlayerManager().getPlayers());
 		view.initialize();
+		view.setLocalPlayer(gameClient.getName());
 		
 		selectedThings = new ArrayList<Thing>();
 		

@@ -44,11 +44,9 @@ public class PlayerPane extends VBox implements Updatable {
 		for (Player player : players) {
 			PlayerView view = getPlayerView(player);
 			
-			if (view == null) {
-				System.out.println("no player view found for player");
+			if (view != null) {
+				view.updatePlayer(player);
 			}
-			
-			view.updatePlayer(player);
 			
 		}
 		
@@ -56,6 +54,18 @@ public class PlayerPane extends VBox implements Updatable {
 	
 	public List<PlayerView> getPlayerViews() {
 		return playerViews;
+	}
+	
+	public void setLocalPlayer(String playerName) {
+		
+		for (Player player : players) {
+			
+			if (player.getName().equals(playerName)) {
+				getPlayerView(player).setLocal();
+			}
+			
+		}
+		
 	}
 	
 	public void clearSelectedImages() {
