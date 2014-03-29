@@ -70,6 +70,10 @@ public class TileActionMenu extends ContextMenu {
 		}
 		
 		List<MenuItem> items = phaseItems.get(newPhase.getClass());
+		if (items == null) {
+			return;
+		}
+		
 		for (MenuItem item : items) {
 			item.setVisible(true);
 		}

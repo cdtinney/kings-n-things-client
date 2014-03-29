@@ -70,11 +70,12 @@ public class GameController extends Controller implements NetworkObjectHandler {
 	@Override
 	public void handleObject(Object object) {
 		
-		LOGGER.info("Received " + object);
-		
 		if (object instanceof UpdateGame) {
 			updateGame((UpdateGame) object);
+			return;
 		}
+		
+		LOGGER.info("Received " + object);
 		
 	}
 	
@@ -83,7 +84,8 @@ public class GameController extends Controller implements NetworkObjectHandler {
 		Game game = update.game;
 		
 		boardController.update(game);
-		//playerController.update(game);
+		playerController.update(game);
+		gameActionController.update(game);
 		
 	}
 	

@@ -14,9 +14,9 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 
+import com.kingsandthings.client.game.Updatable;
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.Game;
-import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.common.network.GameClient;
@@ -24,13 +24,13 @@ import com.kingsandthings.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.util.CustomDataFormat;
 import com.kingsandthings.util.DataImageView;
 
-public class PlayerPaneController extends Controller {
+public class PlayerPaneController extends Controller implements Updatable {
 	
 	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(PlayerPaneController.class.getName());
 	
 	// Networking
-	GameClient gameClient;
+	private GameClient gameClient;
 	
 	// Model
 	private Game game;
@@ -40,12 +40,12 @@ public class PlayerPaneController extends Controller {
 	private PlayerPane view;
 	
 	public void initialize(Game game, GameClient gameClient) {
-		this.game = game;
 		this.gameClient = gameClient;
+		
+		initialize(game);
 	}
 	
 	public void initialize(Game game) {
-		
 		this.game = game;
 		
 		view = new PlayerPane(game.getPlayerManager().getPlayers());
@@ -60,6 +60,7 @@ public class PlayerPaneController extends Controller {
 	
 	public void update(Game game) {
 		this.game = game;
+		
 		view.update(game);
 	}
 	
@@ -67,20 +68,16 @@ public class PlayerPaneController extends Controller {
 		return view;
 	}
 	
-	private void addListeners() {
-		PropertyChangeDispatcher.getInstance().addListener(PlayerManager.class, "activePlayer", this, "activePlayerChanged");
-	}
-	
 	private void addHandlers() {
 		
 		for (final PlayerView playerView : view.getPlayerViews()) {
 			
 			for (DataImageView rackImage : playerView.getRackImageViews()) {
+				
 				addEventHandler(rackImage, "setOnMouseClicked", "handleRackImageClicked");
 				addEventHandler(rackImage, "setOnDragDetected", "handleThingDragDetected");
 				addEventHandler(rackImage, "setOnDragDone", "handleThingDragDone");
 				
-				// TASK - Abstract this (consuming events depending on active player and phase)
 				rackImage.addEventFilter(Event.ANY, new EventHandler<Event> (){
 
 					@Override
@@ -90,29 +87,30 @@ public class PlayerPaneController extends Controller {
 							return;
 						}
 						
-						Player player = playerView.getPlayer();
-						if (game.getActivePlayer() != player) {
+						if (!gameClient.activePlayer()) {
 							event.consume();
 						}
 						
-						if (!game.getPhaseManager().getCurrentPhase().getStep().equals("Thing_Placement")) {
-							event.consume();
-						}
+						// TODO - consume depending on phases
+//						if (!game.getPhaseManager().getCurrentPhase().getStep().equals("Thing_Placement")) {
+//							event.consume();
+//						}
 						
 					}
 					
 				});
+				
 			}
 			
 			for (DataImageView fortImage : playerView.getFortImageViews()) {
+				
 				addEventHandler(fortImage, "setOnDragDetected", "handleThingDragDetected");
 				addEventHandler(fortImage, "setOnDragDone", "handleThingDragDone");
 				
 				fortImage.addEventFilter(Event.ANY, new EventHandler<Event>() {
+					
 					@Override
 					public void handle(Event event) {
-						
-						Player player = playerView.getPlayer();
 						
 						// Allow drag done events to propagate. The active player may have changed
 						// before the event was fired.
@@ -120,14 +118,12 @@ public class PlayerPaneController extends Controller {
 							return;
 						}
 						
-						if (game.getActivePlayer() != player) {
+						if (!gameClient.activePlayer()) {
 							event.consume();
 						}
 						
-						if (!game.getPhaseManager().getCurrentPhase().getName().equals("Tower Placement")) {
-							event.consume();
-						}
 					}
+					
 				});
 				
 			}
@@ -195,6 +191,10 @@ public class PlayerPaneController extends Controller {
 		
 		selectedThings.clear();
 		
+	}
+	
+	private void addListeners() {
+		PropertyChangeDispatcher.getInstance().addListener(PlayerManager.class, "activePlayer", this, "activePlayerChanged");
 	}
 
 }

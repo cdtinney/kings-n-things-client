@@ -7,11 +7,13 @@ import javafx.event.Event;
 
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.Game;
-import com.kingsandthings.common.model.Player;
+import com.kingsandthings.common.model.IGame;
+import com.kingsandthings.common.model.phase.InitialRecruitmentPhase;
 import com.kingsandthings.common.model.phase.Phase;
+import com.kingsandthings.common.model.phase.ThingRecruitmentPhase;
 import com.kingsandthings.common.network.GameClient;
 
-public class GameActionController extends Controller {
+public class GameActionController extends Controller implements Updatable {
 
 	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(GameActionController.class.getName());
@@ -26,12 +28,12 @@ public class GameActionController extends Controller {
 	private GameActionView view;
 	
 	public void initialize(Game game, GameClient gameClient) {
-		this.game = game;
 		this.gameClient = gameClient;
+		
+		initialize(game);
 	}
 	
 	public void initialize(Game game) {
-		
 		this.game = game;
 		
 		view = new GameActionView(game);
@@ -39,6 +41,12 @@ public class GameActionController extends Controller {
 		
 		setupHandlers();
 		
+	}
+	
+	public void update(Game game) {
+		this.game = game;
+		
+		view.update(game);	
 	}
 	
 	public GameActionView getView() {
@@ -71,29 +79,29 @@ public class GameActionController extends Controller {
 	private void handleDrawThingButton(Event event) {
 		
 		Phase phase = game.getPhaseManager().getCurrentPhase();
-		Player player = game.getActivePlayer();
 		
-		if (!phase.getStep().equals("Draw_Things")) {
+		if (!gameClient.activePlayer()) {
 			return;
 		}
 		
-		if (phase.getName().equals("Thing Recruitment")) {
-			int numPaid = view.getNumPaidSelected();
+		if (phase.getClass() == InitialRecruitmentPhase.class) {
 			
-			boolean success = game.getCup().recruitThings(player, numPaid);
-			if (success) {
-				game.getPhaseManager().endPlayerTurn();
-			}
+			final IGame serverGame = gameClient.requestGame();
+			serverGame.recruitThingsInitial();
 			
-			view.resetNumPaidList();
+		} else if (phase.getClass() == ThingRecruitmentPhase.class) {
 			
-			return;
+//			int numPaid = view.getNumPaidSelected();
+//			
+//			boolean success = game.getCup().recruitThings(player, numPaid);
+//			if (success) {
+//				game.getPhaseManager().endPlayerTurn();
+//			}
+//			
+//			view.resetNumPaidList();
+			
 		}
 		
-//		List<Thing> things = game.getCup().drawThings(10);
-//		game.addInitialThingsToPlayer(things, player);
-	
-		view.toggleThingList();
 	}
 	
 	@SuppressWarnings("unused")

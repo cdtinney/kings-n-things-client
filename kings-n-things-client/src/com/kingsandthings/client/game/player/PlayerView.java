@@ -70,6 +70,10 @@ public class PlayerView extends Pane {
 		update();
 		
 	}
+	
+	public void updatePlayer(Player player) {
+		this.player = player;
+	}
 
 	public Player getPlayer() {
 		return player;
@@ -155,9 +159,9 @@ public class PlayerView extends Pane {
 		
 		setNumGoldText(player.getNumGold());
 		setPlayerName(player.getName());
-
-		// TODO - update player view differently for other players
-//		setControlMarkerImage(player.getControlMarker());
+		setControlMarkerImage(player.getControlMarker());
+		
+		// TODO - hide other players Things
 //		setRackThings(player.getRack().getThings());
 //		setFortThings(player.getForts());
 		

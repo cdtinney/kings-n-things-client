@@ -3,7 +3,6 @@ package com.kingsandthings.client.game;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 
-import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -22,7 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import com.kingsandthings.common.model.Game;
-import com.kingsandthings.common.model.phase.InitialPlacementPhase;
+import com.kingsandthings.common.model.phase.InitialRecruitmentPhase;
 import com.kingsandthings.common.model.phase.Phase;
 import com.kingsandthings.common.model.phase.PhaseManager;
 import com.kingsandthings.common.model.phase.ThingRecruitmentPhase;
@@ -53,13 +52,11 @@ public class GameActionView extends VBox implements Updatable {
 		
 		addListeners();
 		
-		bindElements();
-		
 	}
 
 	@Override
-	public void update(Game g) {
-		// TODO - update game action view
+	public void update(Game game) {
+		this.game = game;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -112,17 +109,6 @@ public class GameActionView extends VBox implements Updatable {
 		lookup("#rollDice").setDisable(enable);
 	}
 	
-	private void bindElements() {
-		
-		// Disable draw thing button if active phase is not Thing Recruitment or Initial Placement
-		BooleanBinding binding = (ThingRecruitmentPhase.getActive().or(InitialPlacementPhase.getActive())).not();
-		lookup("#drawThing").disableProperty().bind(binding);
-		
-		// Disable num paid combobox if active phase is not Thing Recruitment
-		lookup("#numPaidRecruits").disableProperty().bind(ThingRecruitmentPhase.getActive().not());
-		
-	}
-	
 	@SuppressWarnings("unused")
 	private void onInitialPlacementStep() {
 		lookup("#endTurn").setDisable(false);
@@ -142,6 +128,10 @@ public class GameActionView extends VBox implements Updatable {
 			setPhaseName("None");
 			return;
 		}
+		
+		Class<? extends Phase> clazz = newPhase.getClass();
+		lookup("#drawThing").setDisable(clazz != ThingRecruitmentPhase.class && clazz != InitialRecruitmentPhase.class);
+		lookup("#numPaidRecruits").setDisable(clazz != ThingRecruitmentPhase.class);
 		
 		if (!newPhase.getStep().equals("Draw_Things")) {
 			lookup("#endTurn").setDisable(newPhase.isMandatory() && newPhase.playerInteractionRequired());
@@ -248,7 +238,7 @@ public class GameActionView extends VBox implements Updatable {
 		PropertyChangeDispatcher.getInstance().addListener(PhaseManager.class, "currentPhase", this, "onPhaseChanged");
 		
 		NotificationDispatcher.getInstance().addListener(ThingRecruitmentPhase.class, Phase.Notification.STEP, this, "onRecruitmentPhaseStep");
-		NotificationDispatcher.getInstance().addListener(InitialPlacementPhase.class, Phase.Notification.STEP, this, "onInitialPlacementStep");
+		NotificationDispatcher.getInstance().addListener(InitialRecruitmentPhase.class, Phase.Notification.STEP, this, "onInitialPlacementStep");
 		
 	}
 

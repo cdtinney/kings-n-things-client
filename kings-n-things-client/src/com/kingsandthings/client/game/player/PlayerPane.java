@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;
 
+import com.kingsandthings.client.game.Updatable;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
@@ -15,7 +16,7 @@ import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
-public class PlayerPane extends VBox {
+public class PlayerPane extends VBox implements Updatable {
 	
 	// View
 	private List<PlayerView> playerViews;
@@ -38,8 +39,18 @@ public class PlayerPane extends VBox {
 	
 	public void update(Game game) {
 		
-		Player active = game.getActivePlayer();
-		getPlayerView(active).setActive(true);
+		players = game.getPlayerManager().getPlayers();
+		
+		for (Player player : players) {
+			PlayerView view = getPlayerView(player);
+			
+			if (view == null) {
+				System.out.println("no player view found for player");
+			}
+			
+			view.updatePlayer(player);
+			
+		}
 		
 	}
 	

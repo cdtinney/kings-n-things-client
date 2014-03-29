@@ -15,11 +15,12 @@ import javafx.scene.input.TransferMode;
 import com.kingsandthings.client.game.Updatable;
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.Game;
-import com.kingsandthings.common.model.IGame;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.model.board.Board.TileLocation;
+import com.kingsandthings.common.model.board.IBoard;
 import com.kingsandthings.common.model.board.Tile;
+import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
@@ -46,9 +47,9 @@ public class BoardController extends Controller implements Updatable {
 	// Sub-controllers
 	private ExpandedTileController expandedTileController;
 	
-	public void initialize(Game game, GameClient client) {
+	public void initialize(Game game, GameClient gameClient) {
+		this.gameClient = gameClient;
 		
-		gameClient = client;
 		initialize(game);
 		
 	}
@@ -153,17 +154,16 @@ public class BoardController extends Controller implements Updatable {
 		TileActionMenu tileActionMenu = (TileActionMenu) item.getParentPopup();
 		TileView tileView = tileActionMenu.getOwner();
 		
-		IGame serverGame = gameClient.requestGame();
-		
-		Player activePlayer = serverGame.getActivePlayer();
-		if (!activePlayer.getName().equals(gameClient.getName())) {
+		if (!gameClient.activePlayer()) {
 			LOGGER.log(LogLevel.STATUS, "You are not the active player.");
 			return;
 		}
 		
-		TileLocation loc = game.getBoard().getTileLocation(tileView.getTile());
-		boolean result = serverGame.setTileControl(loc.r, loc.c, true);
+		IBoard serverBoard = gameClient.requestBoard();
 		
+		TileLocation loc = game.getBoard().getTileLocation(tileView.getTile());
+		
+		boolean result = serverBoard.setTileControl(loc.r, loc.c, true);
 		
 	}
 	
@@ -175,9 +175,9 @@ public class BoardController extends Controller implements Updatable {
 		if (dragEvent.getDragboard().hasContent(CustomDataFormat.THINGS)) {
 			
 			TileView tileView = (TileView) event.getSource();
+			Player owner = tileView.getTile().getOwner();
 			
-			boolean activePlayerOwned = tileView.getTile().getOwner() == game.getActivePlayer();
-			
+			boolean activePlayerOwned = owner != null && owner.equals(game.getActivePlayer());
 			if (activePlayerOwned) {
 				dragEvent.acceptTransferModes(TransferMode.ANY);
 			}
@@ -209,8 +209,14 @@ public class BoardController extends Controller implements Updatable {
 		for (int i=0; i<things.size(); ++i) {
 			things.get(i).setImage(new Image(imageUrls.get(i)));
 		}
-		
-		boolean success = game.getBoard().addThingsToTile(tile, things);
+
+		IBoard board = gameClient.requestBoard();
+		boolean success;
+		if (things.size() == 1 && things.get(0) instanceof Fort) {
+			success = board.placeFort((Fort) things.get(0), tile);
+		} else {
+			success = board.addThingsToTile(tile, things);
+		}
 		
 		dragEvent.setDropCompleted(success);
 		dragEvent.consume();

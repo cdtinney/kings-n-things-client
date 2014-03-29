@@ -166,7 +166,7 @@ public class TileView extends ImageView {
 	}
 	
 	public void removeHighlight() {
-		this.setEffect(null);
+		setEffect(null);
 	}
 	
 	private void addThingStackView() {
