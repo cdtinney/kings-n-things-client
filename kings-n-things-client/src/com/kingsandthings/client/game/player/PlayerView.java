@@ -3,9 +3,6 @@ package com.kingsandthings.client.game.player;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.DropShadowBuilder;
-import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
