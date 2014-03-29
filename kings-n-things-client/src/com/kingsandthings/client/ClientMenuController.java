@@ -118,7 +118,7 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 			@Override
 			public void run() {
 				
-				stage.setTitle("Kings & Things - Client - " + client.getName());
+				stage.setTitle("K&T - Client - " + client.getName());
 				
 				gameController.initialize(stage, initializeGame.game, instance, client);
 				client.send(NetworkPlayerStatus.PLAYER_INITIALIZED);

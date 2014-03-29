@@ -12,15 +12,13 @@ public class ClientApplication extends Application {
 	
 	private static Logger LOGGER = Logger.getLogger(ClientApplication.class.getName());
 	
-	private final float VERSION = 0.2f;
-	
 	private ClientMenuController mainMenuController = new ClientMenuController();
 	
 	@Override
 	public void start(Stage primaryStage) {
 		
 		primaryStage.setResizable(false);
-		primaryStage.setTitle("Kings & Things - Client -  v" + VERSION);
+		primaryStage.setTitle("K&T - Client");
 		primaryStage.getIcons().add(new Image("/images/icon.png"));
 		
 		mainMenuController.initialize(primaryStage);

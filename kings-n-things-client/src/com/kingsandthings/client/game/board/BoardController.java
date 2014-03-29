@@ -18,7 +18,6 @@ import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
-import com.kingsandthings.common.model.board.Board.TileLocation;
 import com.kingsandthings.common.model.board.IBoard;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.things.Fort;
@@ -172,10 +171,7 @@ public class BoardController extends Controller implements Updatable {
 		}
 		
 		IBoard serverBoard = gameClient.requestBoard();
-		
-		TileLocation loc = game.getBoard().getTileLocation(tileView.getTile());
-		
-		boolean result = serverBoard.setTileControl(loc.r, loc.c, true);
+		boolean result = serverBoard.setTileControl(tileView.getTile(), true);
 		
 	}
 	

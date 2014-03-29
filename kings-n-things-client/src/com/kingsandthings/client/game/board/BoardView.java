@@ -1,7 +1,5 @@
 package com.kingsandthings.client.game.board;
 
-import java.beans.PropertyChangeEvent;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
@@ -22,7 +20,6 @@ import javafx.stage.StageStyle;
 import com.kingsandthings.client.game.Updatable;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.board.Tile;
-import com.kingsandthings.common.model.phase.PhaseManager;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
 public class BoardView extends Pane implements Updatable {
