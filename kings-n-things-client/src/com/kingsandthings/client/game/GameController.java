@@ -11,6 +11,7 @@ import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.common.network.NetworkObjectHandler;
+import com.kingsandthings.common.network.NetworkRegistry.Instruction;
 import com.kingsandthings.common.network.NetworkRegistry.UpdateGame;
 
 public class GameController extends Controller implements NetworkObjectHandler {
@@ -75,10 +76,20 @@ public class GameController extends Controller implements NetworkObjectHandler {
 			return;
 		}
 		
+		
+		if (object instanceof Instruction) {
+			handleInstruction((Instruction) object);
+			return;
+		}
+		
 		LOGGER.info("Received " + object);
 		
 	}
 	
+	private void handleInstruction(Instruction instruction) {
+		boardController.updateInstruction(instruction.text);
+	}
+
 	private void updateGame(UpdateGame update) {
 		
 		Game game = update.game;

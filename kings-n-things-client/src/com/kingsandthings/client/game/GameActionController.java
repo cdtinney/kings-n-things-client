@@ -1,6 +1,5 @@
 package com.kingsandthings.client.game;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import javafx.event.Event;
@@ -56,22 +55,7 @@ public class GameActionController extends Controller implements Updatable {
 	private void setupHandlers() {
 		
 		addEventHandler(view, "endTurn", "setOnAction", "handleEndTurnButton");
-		
 		addEventHandler(view, "drawThing", "setOnAction", "handleDrawThingButton");
-		addEventHandler(view, "selectThings", "setOnAction", "handleSelectThingsButton");
-		
-	}
-	
-	@SuppressWarnings({ "unused" })
-	private void handleSelectThingsButton(Event event) {
-		
-		List<Integer> selected = view.getSelectedThings();
-		
-		// Add the selected things to the player's list of Things
-		game.addThingIndicesToPlayer(selected, game.getActivePlayer());
-		
-		// Hide the list of Things
-		view.toggleThingList();
 		
 	}
 	
@@ -106,7 +90,10 @@ public class GameActionController extends Controller implements Updatable {
 	
 	@SuppressWarnings("unused")
 	private void handleEndTurnButton(Event event) {
-		game.getPhaseManager().endPlayerTurn();		
+
+		final IGame serverGame = gameClient.requestGame();
+		serverGame.endTurn(gameClient.getName());
+		
 	}
 	
 }

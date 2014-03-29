@@ -1,5 +1,7 @@
 package com.kingsandthings.client.game.board;
 
+import java.beans.PropertyChangeEvent;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
@@ -20,17 +22,17 @@ import javafx.stage.StageStyle;
 import com.kingsandthings.client.game.Updatable;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.board.Tile;
+import com.kingsandthings.common.model.phase.PhaseManager;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
 public class BoardView extends Pane implements Updatable {
 	
 	private static Logger LOGGER = Logger.getLogger(BoardView.class.getName());
 	
-	private static Label instructions;
-	
 	private TileView[][] tileViews = new TileView[10][10];
 	
 	private Stage diceStage;
+	private Label instructions;
 	
 	public void initialize(Game game) {
 		
@@ -67,6 +69,10 @@ public class BoardView extends Pane implements Updatable {
 		
 	}
 	
+	public void setInstruction(String text) {
+		instructions.setText(text);
+	}
+	
 	public TileView[][] getTiles() {
 		return tileViews;
 	}
@@ -89,10 +95,10 @@ public class BoardView extends Pane implements Updatable {
 					view.initialize(tile);
 					
 					// TODO - change this, too many listeners (or move to TileView)
-					PropertyChangeDispatcher.getInstance().addListener(Tile.class, "owner", this, view, TileView.class, "handleTileOwnerChanged");
-					PropertyChangeDispatcher.getInstance().addListener(Tile.class, "fort", this, view, TileView.class, "handleTileFortChanged");
-					PropertyChangeDispatcher.getInstance().addListener(Tile.class, "things", this, view, TileView.class, "handleTileThingsChanged");
-					PropertyChangeDispatcher.getInstance().addListener(Tile.class, "battleToResolve", this, view, TileView.class, "handleBattleChanged");
+					PropertyChangeDispatcher.getInstance().addListener(Tile.class, "owner", this, view, TileView.class, "onTileOwnerChange");
+					PropertyChangeDispatcher.getInstance().addListener(Tile.class, "fort", this, view, TileView.class, "onTileFortChanged");
+					PropertyChangeDispatcher.getInstance().addListener(Tile.class, "things", this, view, TileView.class, "onTileThingsChange");
+					PropertyChangeDispatcher.getInstance().addListener(Tile.class, "battleToResolve", this, view, TileView.class, "onBattleChange");
 					
 				} catch (IndexOutOfBoundsException e) {
 					LOGGER.warning("Model and view tile array size mismatch - " + e.getMessage());
@@ -119,22 +125,22 @@ public class BoardView extends Pane implements Updatable {
 	}
 	
 	@SuppressWarnings("unused")
-	private void handleBattleChanged(TileView tileView) {
+	private void onBattleChange(TileView tileView) {
 		tileView.updateBattleHighlight();
 	}
 	
 	@SuppressWarnings("unused")
-	private void handleTileThingsChanged(TileView tileView) {
+	private void onTileThingsChange(TileView tileView) {
 		tileView.updateThingsStackView();
 	}
 	
 	@SuppressWarnings("unused")
-	private void handleTileFortChanged(TileView tileView) {
+	private void onTileFortChanged(TileView tileView) {
 		tileView.updateFortView();		
 	}
 
 	@SuppressWarnings("unused")
-	private void handleTileOwnerChanged(TileView tileView) {
+	private void onTileOwnerChange(TileView tileView) {
 		tileView.updateControlMarkerView();
 		tileView.setImage(tileView.getTile().getImage());
 	}
@@ -182,10 +188,12 @@ public class BoardView extends Pane implements Updatable {
 	}
 	
 	private void addInstructionText() {
+		
 		instructions = new Label("instructions go here");
 		instructions.getStyleClass().add("instructionsText");
 		instructions.setPrefWidth(getBoundsInParent().getWidth() + 75);
 		getChildren().add(instructions);
+		
 	}
 	
 	private TileView[][] generateTileViews(int initialX, int initialY, int xOffset, int yOffset, int columnOffset, int size) {
@@ -246,15 +254,6 @@ public class BoardView extends Pane implements Updatable {
 		
 		return tiles;
 		
-	}
-
-	public static void setInstructionText(String message) {
-		
-		if (instructions == null) {
-			return;
-		}
-		
-		instructions.setText(message == null? "" : message);		
 	}
 	
 }

@@ -1,18 +1,14 @@
 package com.kingsandthings.client.game;
 
 import java.beans.PropertyChangeEvent;
-import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -60,40 +56,6 @@ public class GameActionView extends VBox implements Updatable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void toggleThingList() {
-
-		ListView<String>  list = (ListView<String>) lookup("#thingList");
-		Node selectButton = lookup("#selectThings");
-		
-		// If its already visible, clear selection and hide
-		if (list.visibleProperty().get()) {
-			
-			list.getSelectionModel().clearSelection();
-			
-			list.setVisible(false);
-			selectButton.setVisible(false);
-			
-		} else {
-			
-			// Update list of Things
-			list.setItems(FXCollections.observableArrayList(game.getCup().getThingNames()));
-			
-			// TASK - Demo only (selectable list of things)
-			if (game.getPhaseManager().getCurrentPhase().getStep().equals("Draw_Things")) {
-				list.setVisible(true);
-				selectButton.setVisible(true);
-			}
-		}
-		
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<Integer> getSelectedThings() {
-		ListView<String>  list = (ListView<String>) lookup("#thingList");
-		return list.getSelectionModel().getSelectedIndices();
-	}
-	
-	@SuppressWarnings("unchecked")
 	public Integer getNumPaidSelected() {
 		ComboBox<Integer>  list = (ComboBox<Integer>) lookup("#numPaidRecruits");
 		return list.getSelectionModel().getSelectedItem();
@@ -124,7 +86,6 @@ public class GameActionView extends VBox implements Updatable {
 		
 		Phase newPhase = (Phase) event.getNewValue();
 		if (newPhase == null) {
-			lookup("#endTurn").setDisable(true);
 			setPhaseName("None");
 			return;
 		}
@@ -132,12 +93,6 @@ public class GameActionView extends VBox implements Updatable {
 		Class<? extends Phase> clazz = newPhase.getClass();
 		lookup("#drawThing").setDisable(clazz != ThingRecruitmentPhase.class && clazz != InitialRecruitmentPhase.class);
 		lookup("#numPaidRecruits").setDisable(clazz != ThingRecruitmentPhase.class);
-		
-		if (!newPhase.getStep().equals("Draw_Things")) {
-			lookup("#endTurn").setDisable(newPhase.isMandatory() && newPhase.playerInteractionRequired());
-		} else {
-			lookup("#endTurn").setDisable(true);
-		}
 		
 		setPhaseName(newPhase.getName());
 		
@@ -165,23 +120,7 @@ public class GameActionView extends VBox implements Updatable {
 		drawThingButton.getStyleClass().addAll("nofocus");
 		drawThingButton.setDisable(true);
 		
-		ListView<String> list = new ListView<String>();
-		list.setId("thingList");
-		list.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		list.setMaxWidth(205);
-		list.setPrefHeight(210);
-		
-		list.managedProperty().bind(list.visibleProperty());
-		list.setVisible(false);
-		
-		Button selectThings = new Button("Select Things");
-		selectThings.setId("selectThings");
-		selectThings.getStyleClass().addAll("nofocus");
-
-		selectThings.managedProperty().bind(selectThings.visibleProperty());
-		selectThings.setVisible(false);
-		
-		getChildren().addAll(drawThingButton, list, selectThings);
+		getChildren().addAll(drawThingButton);
 		
 	}
 	
@@ -224,7 +163,6 @@ public class GameActionView extends VBox implements Updatable {
 		Button endTurnButton = new Button("End Turn");
 		endTurnButton.setId("endTurn");
 		endTurnButton.getStyleClass().add("nofocus");
-		endTurnButton.setDisable(true);
 		
 		buttons.getChildren().addAll(endTurnButton);
 		

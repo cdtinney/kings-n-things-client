@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
@@ -84,6 +85,17 @@ public class BoardController extends Controller implements Updatable {
 		this.game = game;
 		
 		boardView.update(game);
+		
+	}
+	
+	public void updateInstruction(final String text) {
+		
+		Platform.runLater(new Runnable() {
+			
+			public void run() {
+				boardView.setInstruction(text);
+			}
+		});
 		
 	}
 	
@@ -214,8 +226,10 @@ public class BoardController extends Controller implements Updatable {
 		boolean success;
 		if (things.size() == 1 && things.get(0) instanceof Fort) {
 			success = board.placeFort((Fort) things.get(0), tile);
+			
 		} else {
 			success = board.addThingsToTile(tile, things);
+			
 		}
 		
 		dragEvent.setDropCompleted(success);
@@ -242,7 +256,8 @@ public class BoardController extends Controller implements Updatable {
 				
 			} else if (!tile.isDiscovered()) {
 
-				BoardView.setInstructionText("you are attempting to move to an unexplored hex. please roll the dice.");
+				// TODO - set instruction text elsewhere
+				//BoardView.setInstructionText("you are attempting to move to an unexplored hex. please roll the dice.");
 				
 				// Blocks until the user rolls
 				boardView.showDice();
@@ -253,7 +268,8 @@ public class BoardController extends Controller implements Updatable {
 				
 				game.getBoard().moveThingsToUnexploredTile(roll, initialMovementTile, tile, selectedThings);
 				
-				BoardView.setInstructionText("do some movement");
+				// TODO - set instruction text elsewhere
+				//BoardView.setInstructionText("do some movement");
 				
 			} else {
 				game.getBoard().moveThings(initialMovementTile, tile, selectedThings);
@@ -262,7 +278,8 @@ public class BoardController extends Controller implements Updatable {
 			
 			Player player = game.getActivePlayer();
 			if (!game.getBoard().movementPossible(player)) {
-				BoardView.setInstructionText("no more movement possible! please end turn");
+				// TODO - set instruction text elsewhere
+				//BoardView.setInstructionText("no more movement possible! please end turn");
 			}
 
 			tileView.removeHighlight();

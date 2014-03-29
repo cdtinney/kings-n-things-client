@@ -87,6 +87,7 @@ public class TileView extends ImageView {
 		updateControlMarkerView();
 		updateThingsStackView();
 		updateBattleHighlight();
+		
 	}
 	
 	/*
