@@ -7,7 +7,7 @@ import java.util.List;
 import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;
 
-import com.kingsandthings.client.game.InitializableView;
+import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.model.Rack;
@@ -15,7 +15,7 @@ import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
-public class PlayerPane extends VBox implements InitializableView {
+public class PlayerPane extends VBox {
 	
 	// View
 	private List<PlayerView> playerViews;
@@ -27,13 +27,19 @@ public class PlayerPane extends VBox implements InitializableView {
 		this.players = players;
 	}
 
-	@Override
 	public void initialize() {
 		
 		getStyleClass().addAll("pane", "board");
 		
 		addPlayerViews();
 		addListeners();
+		
+	}
+	
+	public void update(Game game) {
+		
+		Player active = game.getActivePlayer();
+		getPlayerView(active).setActive(true);
 		
 	}
 	
@@ -91,6 +97,7 @@ public class PlayerPane extends VBox implements InitializableView {
 		}
 		
 		return null;
+		
 	}
 	
 	@SuppressWarnings("unused")

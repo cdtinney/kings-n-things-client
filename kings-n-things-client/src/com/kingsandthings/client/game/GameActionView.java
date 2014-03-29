@@ -29,7 +29,7 @@ import com.kingsandthings.common.model.phase.ThingRecruitmentPhase;
 import com.kingsandthings.game.events.NotificationDispatcher;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
-public class GameActionView extends VBox implements InitializableView {
+public class GameActionView extends VBox implements Updatable {
 
 	// Model
 	private Game game;
@@ -38,7 +38,6 @@ public class GameActionView extends VBox implements InitializableView {
 		this.game = game;
 	}
 	
-	@Override
 	public void initialize() {
 		
 		setPrefWidth(235);
@@ -56,6 +55,11 @@ public class GameActionView extends VBox implements InitializableView {
 		
 		bindElements();
 		
+	}
+
+	@Override
+	public void update(Game g) {
+		// TODO - update game action view
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -106,15 +110,6 @@ public class GameActionView extends VBox implements InitializableView {
 	
 	public void enableDiceButton(boolean enable) {
 		lookup("#rollDice").setDisable(enable);
-	}
-	
-	private void addListeners() {
-		
-		PropertyChangeDispatcher.getInstance().addListener(PhaseManager.class, "currentPhase", this, "onPhaseChanged");
-		
-		NotificationDispatcher.getInstance().addListener(ThingRecruitmentPhase.class, Phase.Notification.STEP, this, "onRecruitmentPhaseStep");
-		NotificationDispatcher.getInstance().addListener(InitialPlacementPhase.class, Phase.Notification.STEP, this, "onInitialPlacementStep");
-		
 	}
 	
 	private void bindElements() {
@@ -245,6 +240,15 @@ public class GameActionView extends VBox implements InitializableView {
 		
 		getChildren().addAll(phaseName, buttons);
 		
+		
+	}
+	
+	private void addListeners() {
+		
+		PropertyChangeDispatcher.getInstance().addListener(PhaseManager.class, "currentPhase", this, "onPhaseChanged");
+		
+		NotificationDispatcher.getInstance().addListener(ThingRecruitmentPhase.class, Phase.Notification.STEP, this, "onRecruitmentPhaseStep");
+		NotificationDispatcher.getInstance().addListener(InitialPlacementPhase.class, Phase.Notification.STEP, this, "onInitialPlacementStep");
 		
 	}
 

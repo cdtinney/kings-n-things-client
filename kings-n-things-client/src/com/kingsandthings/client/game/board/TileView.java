@@ -53,7 +53,6 @@ public class TileView extends ImageView {
 	public void initialize(Tile tile) {
 		
 		this.tile = tile;
-		setImage(tile.getImage());
 		
 		addControlMarkerView();
 		addFortView();
@@ -63,11 +62,31 @@ public class TileView extends ImageView {
 		addPropagationHandler(fortImageView);
 		addPropagationHandler(thingStackImageView);
 		
+		update();
+		
+	}
+	
+	public void setTile(Tile tile, boolean update) {
+		this.tile = tile;
+		
+		if (update) {
+			update();
+		}
+		
+	}
+
+	public Tile getTile() {
+		return tile;
+	}
+	
+	public void update() {
+		
+		setImage(tile.getImage());
+		
 		updateFortView();
 		updateControlMarkerView();
 		updateThingsStackView();
 		updateBattleHighlight();
-		
 	}
 	
 	/*
@@ -105,10 +124,6 @@ public class TileView extends ImageView {
 			
 		}
 		
-	}
-
-	public Tile getTile() {
-		return tile;
 	}
 	
 	public void updateBattleHighlight() {
@@ -154,18 +169,6 @@ public class TileView extends ImageView {
 		this.setEffect(null);
 	}
 	
-	private void addPropagationHandler(ImageView imageView) {
-		
-		final TileView instance = this;
-		imageView.addEventHandler(Event.ANY, new EventHandler<Event>() {
-			@Override
-			public void handle(Event event) {
-				instance.fireEvent(event);
-			}
-		});
-		
-	}
-	
 	private void addThingStackView() {
 
 		double stackWidth = 35;
@@ -188,6 +191,18 @@ public class TileView extends ImageView {
 		
 		controlMarkerImageView = ImageViewBuilder.create().fitWidth(30).x(getX() + 47).y(getY() + 3).preserveRatio(true).cache(true).build();
 		((Pane) getParent()).getChildren().add(controlMarkerImageView);	
+		
+	}
+	
+	private void addPropagationHandler(ImageView imageView) {
+		
+		final TileView instance = this;
+		imageView.addEventHandler(Event.ANY, new EventHandler<Event>() {
+			@Override
+			public void handle(Event event) {
+				instance.fireEvent(event);
+			}
+		});
 		
 	}
 	

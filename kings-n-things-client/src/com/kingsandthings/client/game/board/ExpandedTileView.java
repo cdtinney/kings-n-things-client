@@ -17,14 +17,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBuilder;
 
-import com.kingsandthings.client.game.InitializableView;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.util.DataImageView;
 
-public class ExpandedTileView extends VBox implements InitializableView {
+public class ExpandedTileView extends VBox {
 
 	private static final int WIDTH = 500;
 	private static final int THING_WIDTH = 60;
@@ -46,7 +45,6 @@ public class ExpandedTileView extends VBox implements InitializableView {
 		grids = new ArrayList<GridPane>();
 	}
 	
-	@Override
 	public void initialize() {
 		
 		setPrefWidth(WIDTH);

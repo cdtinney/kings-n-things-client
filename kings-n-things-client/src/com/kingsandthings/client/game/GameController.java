@@ -9,11 +9,16 @@ import com.kingsandthings.client.game.board.BoardController;
 import com.kingsandthings.client.game.player.PlayerPaneController;
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.Game;
+import com.kingsandthings.common.network.GameClient;
+import com.kingsandthings.common.network.NetworkObjectHandler;
+import com.kingsandthings.common.network.NetworkRegistry.UpdateGame;
 
-public class GameController extends Controller {
+public class GameController extends Controller implements NetworkObjectHandler {
 	
-	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(GameController.class.getName());
+
+	// Networking
+	private GameClient gameClient;
 	
 	// Model 
 	private Game game;
@@ -26,35 +31,68 @@ public class GameController extends Controller {
 	private PlayerPaneController playerController;
 	private GameActionController gameActionController;
 	
-	public void initialize(Stage stage, Game game, ClientMenuController parent) {
-		
-		view = new GameView();
-		view.initialize();
-		
-		this.game = game;
+	public GameController() {
 		
 		boardController = new BoardController();
 		playerController = new PlayerPaneController();
 		gameActionController = new GameActionController();
 		
+	}
+	
+	public void initialize(Stage stage, Game game, ClientMenuController parent, GameClient client) {
+		
+		gameClient = client;
+		if (gameClient != null) {
+			gameClient.setHandler(this);
+		}
+		
+		initialize(stage, game, parent);
+		
+	}
+	
+	public void initialize(Stage stage, Game game, ClientMenuController parent) {
+
+		this.game = game;
+		
+		view = new GameView();
+		view.initialize();
+		
 		initializeSubControllers();
 		addSubViews();
 		
 		stage.setScene(view);
-		stage.centerOnScreen();
 		
-		addEventHandler(view.getRoot(), "quitGameMenuItem", "setOnAction", "handleQuitGameMenuItemAction");
+		stage.setWidth(GameView.WIDTH);
+		stage.setHeight(GameView.HEIGHT);
+		
+	}
+
+	@Override
+	public void handleObject(Object object) {
+		
+		LOGGER.info("Received " + object);
+		
+		if (object instanceof UpdateGame) {
+			updateGame((UpdateGame) object);
+		}
 		
 	}
 	
-	public GameActionController getGameActionController() {
-		return gameActionController;
+	private void updateGame(UpdateGame update) {
+		
+		Game game = update.game;
+		
+		boardController.update(game);
+		//playerController.update(game);
+		
 	}
 	
 	private void initializeSubControllers() {
-		boardController.initialize(game);
-		playerController.initialize(game);
-		gameActionController.initialize(game);
+		
+		boardController.initialize(game, gameClient);
+		playerController.initialize(game, gameClient);
+		gameActionController.initialize(game, gameClient);
+		
 	}
 	
 	private void addSubViews() {

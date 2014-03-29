@@ -19,6 +19,7 @@ import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.model.things.Thing;
+import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.util.CustomDataFormat;
 import com.kingsandthings.util.DataImageView;
@@ -28,12 +29,20 @@ public class PlayerPaneController extends Controller {
 	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(PlayerPaneController.class.getName());
 	
+	// Networking
+	GameClient gameClient;
+	
 	// Model
 	private Game game;
 	private List<Thing> selectedThings;
 	
 	// View
 	private PlayerPane view;
+	
+	public void initialize(Game game, GameClient gameClient) {
+		this.game = game;
+		this.gameClient = gameClient;
+	}
 	
 	public void initialize(Game game) {
 		
@@ -47,6 +56,11 @@ public class PlayerPaneController extends Controller {
 		addHandlers();
 		addListeners();
 		
+	}
+	
+	public void update(Game game) {
+		this.game = game;
+		view.update(game);
 	}
 	
 	public Node getView() {

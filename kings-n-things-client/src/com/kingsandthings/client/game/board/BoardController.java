@@ -12,19 +12,26 @@ import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 
+import com.kingsandthings.client.game.Updatable;
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.Game;
+import com.kingsandthings.common.model.IGame;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
+import com.kingsandthings.common.model.board.Board.TileLocation;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.things.Thing;
+import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.logging.LogLevel;
 import com.kingsandthings.util.CustomDataFormat;
 
-public class BoardController extends Controller {
+public class BoardController extends Controller implements Updatable {
 	
 	private static Logger LOGGER = Logger.getLogger(BoardController.class.getName());
+	
+	// Networking
+	private GameClient gameClient;
 
 	// Model
 	private Game game;
@@ -39,14 +46,20 @@ public class BoardController extends Controller {
 	// Sub-controllers
 	private ExpandedTileController expandedTileController;
 	
+	public void initialize(Game game, GameClient client) {
+		
+		gameClient = client;
+		initialize(game);
+		
+	}
+	
 	public void initialize(Game game) {
 
 		this.game = game;
 		
-		// Initialize views and set the tiles
+		// Initialize the board view
 		boardView = new BoardView();
-		boardView.initialize();		
-		boardView.setTileImages(game.getBoard().getTiles());
+		boardView.initialize(game);		
 		
 		// Initialize the expand tile controller
 		expandedTileController = new ExpandedTileController();
@@ -65,18 +78,18 @@ public class BoardController extends Controller {
 		
 	}
 	
-	/**
-	 * The view of a controller should be the highest-level parent node.
-	 * 
-	 * @return 
-	 */
+	@Override
+	public void update(Game game) {
+		this.game = game;
+		
+		boardView.update(game);
+		
+	}
+	
 	public Node getView() {
 		return boardView;
 	}
 	
-	/**
-	 * Subscribe to click events for the TileView objects.
-	 */
 	private void setupTileClickHandlers() {
 		
 		TileView[][] tileViews = boardView.getTiles();
@@ -140,11 +153,17 @@ public class BoardController extends Controller {
 		TileActionMenu tileActionMenu = (TileActionMenu) item.getParentPopup();
 		TileView tileView = tileActionMenu.getOwner();
 		
-		Player player = game.getActivePlayer();
+		IGame serverGame = gameClient.requestGame();
 		
-		if (game.getBoard().setTileControl(tileView.getTile(), player, true)) {
-			game.getPhaseManager().endPlayerTurn();
+		Player activePlayer = serverGame.getActivePlayer();
+		if (!activePlayer.getName().equals(gameClient.getName())) {
+			LOGGER.log(LogLevel.STATUS, "You are not the active player.");
+			return;
 		}
+		
+		TileLocation loc = game.getBoard().getTileLocation(tileView.getTile());
+		boolean result = serverGame.setTileControl(loc.r, loc.c, true);
+		
 		
 	}
 	

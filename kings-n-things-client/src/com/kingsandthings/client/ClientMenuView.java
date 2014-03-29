@@ -21,9 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import com.kingsandthings.client.game.InitializableView;
-
-public class ClientMenuView extends Scene implements InitializableView {
+public class ClientMenuView extends Scene {
 	
 	private final static int WIDTH = 600;
 	private final static int HEIGHT = 400;
@@ -43,7 +41,6 @@ public class ClientMenuView extends Scene implements InitializableView {
 		getStylesheets().add(getClass().getResource("/css/MainMenu.css").toExternalForm());
 	}
 	
-	@Override
 	public void initialize() {
 		
 		connectionFields = new ArrayList<TextField>();

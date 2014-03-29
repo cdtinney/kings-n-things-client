@@ -9,17 +9,26 @@ import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.phase.Phase;
+import com.kingsandthings.common.network.GameClient;
 
 public class GameActionController extends Controller {
 
 	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(GameActionController.class.getName());
 
+	// Networking
+	GameClient gameClient;
+	
 	// Model
 	private Game game;
 	
 	// View
 	private GameActionView view;
+	
+	public void initialize(Game game, GameClient gameClient) {
+		this.game = game;
+		this.gameClient = gameClient;
+	}
 	
 	public void initialize(Game game) {
 		

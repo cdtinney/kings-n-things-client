@@ -12,13 +12,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import com.kingsandthings.client.game.InitializableView;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.util.DataImageView;
 
-public class PlayerView extends Pane implements InitializableView {
+public class PlayerView extends Pane {
 	
 	private static final Image rackImg = new Image("/images/extra/rack.png");
 	
@@ -52,7 +51,6 @@ public class PlayerView extends Pane implements InitializableView {
 		this.player = player;
 	}
 	
-	@Override
 	public void initialize() {
 
 		setPrefWidth(WIDTH);

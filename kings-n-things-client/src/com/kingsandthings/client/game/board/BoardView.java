@@ -17,22 +17,22 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import com.kingsandthings.client.game.InitializableView;
+import com.kingsandthings.client.game.Updatable;
+import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
-public class BoardView extends Pane implements InitializableView {
+public class BoardView extends Pane implements Updatable {
 	
 	private static Logger LOGGER = Logger.getLogger(BoardView.class.getName());
 	
 	private static Label instructions;
 	
-	private TileView[][] tiles = new TileView[10][10];
+	private TileView[][] tileViews = new TileView[10][10];
 	
 	private Stage diceStage;
 	
-	@Override
-	public void initialize() {
+	public void initialize(Game game) {
 		
 		getStyleClass().addAll("pane", "board");
 		
@@ -42,41 +42,36 @@ public class BoardView extends Pane implements InitializableView {
 		int yOffset = 91;
 		int columnOffset = 45;
 		
-		tiles = generateTiles(initialX, initialY, xOffset, yOffset, columnOffset, 10);
+		tileViews = generateTileViews(initialX, initialY, xOffset, yOffset, columnOffset, 10);
 		
-		addTilesToView(tiles);
+		addTileViews(tileViews);
 		addInstructionText();
 		addDiceStage();
 		
-	}
-
-	public static void setInstructionText(String message) {
+		initializeTiles(game.getBoard().getTiles());
 		
-		if (instructions == null) {
-			return;
-		}
-		
-		instructions.setText(message == null? "" : message);		
 	}
 	
-	public void showDice() {		
-		
-		if (diceStage.getOwner() == null) {
-			diceStage.initOwner(getScene().getWindow());
+	public void update(Game game) {
+
+		Tile[][] modelTiles = game.getBoard().getTiles();
+		for (int i=0; i<modelTiles.length; ++i) {
+			for (int j=0; j<modelTiles[i].length; ++j) {
+				
+				if (tileViews[i][j] != null && modelTiles[i][j] != null) {
+					tileViews[i][j].setTile(modelTiles[i][j], false);
+				}			
+				
+			}
 		}
 		
-		Stage parent = (Stage) getScene().getWindow();
-		diceStage.setX(parent.getX() + parent.getWidth() / 2 - 175);
-		diceStage.setY(parent.getY() + parent.getHeight() / 2 + 350);
-		
-        diceStage.showAndWait();
 	}
 	
 	public TileView[][] getTiles() {
-		return tiles;
+		return tileViews;
 	}
 	
-	public void setTileImages(Tile[][] modelTiles) {
+	public void initializeTiles(Tile[][] modelTiles) {
 		
 		for (int i=0; i<modelTiles.length; ++i) {
 			for (int j=0; j<modelTiles[i].length; ++j) {
@@ -85,7 +80,7 @@ public class BoardView extends Pane implements InitializableView {
 				
 				try {
 					
-					final TileView view = tiles[i][j];
+					final TileView view = tileViews[i][j];
 					
 					if (tile == null || view == null) {
 						continue;
@@ -101,11 +96,26 @@ public class BoardView extends Pane implements InitializableView {
 					
 				} catch (IndexOutOfBoundsException e) {
 					LOGGER.warning("Model and view tile array size mismatch - " + e.getMessage());
+					
 				}
 				
 			}
 		}
 		
+	}
+	
+	public void showDice() {		
+		
+		if (diceStage.getOwner() == null) {
+			diceStage.initOwner(getScene().getWindow());
+		}
+		
+		Stage parent = (Stage) getScene().getWindow();
+		diceStage.setX(parent.getX() + parent.getWidth() / 2 - 175);
+		diceStage.setY(parent.getY() + parent.getHeight() / 2 + 350);
+		
+        diceStage.showAndWait();
+        
 	}
 	
 	@SuppressWarnings("unused")
@@ -129,7 +139,7 @@ public class BoardView extends Pane implements InitializableView {
 		tileView.setImage(tileView.getTile().getImage());
 	}
 	
-	private void addTilesToView(TileView[][] tiles) {
+	private void addTileViews(TileView[][] tiles) {
 		
 		for (TileView[] row : tiles) {
 			for (TileView tile : row) {
@@ -178,7 +188,7 @@ public class BoardView extends Pane implements InitializableView {
 		getChildren().add(instructions);
 	}
 	
-	private TileView[][] generateTiles(int initialX, int initialY, int xOffset, int yOffset, int columnOffset, int size) {
+	private TileView[][] generateTileViews(int initialX, int initialY, int xOffset, int yOffset, int columnOffset, int size) {
 
 		TileView[][] tiles = new TileView[size][size];
 		
@@ -236,6 +246,15 @@ public class BoardView extends Pane implements InitializableView {
 		
 		return tiles;
 		
+	}
+
+	public static void setInstructionText(String message) {
+		
+		if (instructions == null) {
+			return;
+		}
+		
+		instructions.setText(message == null? "" : message);		
 	}
 	
 }

@@ -11,10 +11,10 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 
-public class GameView extends Scene implements InitializableView {
+public class GameView extends Scene {
 	
-	private final static int WIDTH = 1400;
-	private final static int HEIGHT = 900;
+	public final static int WIDTH = 1400;
+	public final static int HEIGHT = 900;
 	
 	private static Label status;
 	
@@ -27,7 +27,6 @@ public class GameView extends Scene implements InitializableView {
 		getStylesheets().add(getClass().getResource("/css/Game.css").toExternalForm());
 	}
 	
-	@Override
 	public void initialize() {
 		addMenuBar();
 		addStatusText();

@@ -83,7 +83,7 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 		}
 		
 		client = new GameClient(playerName);
-		client.getHandlers().add(this);
+		client.setHandler(this);
 		client.start(view.getIP(),  view.getPort());
 		
 		view.setStatusText("waiting to connect...");
@@ -117,8 +117,12 @@ public class ClientMenuController extends Controller implements NetworkObjectHan
 
 			@Override
 			public void run() {
-				gameController.initialize(stage, initializeGame.game, instance);
+				
+				stage.setTitle("Kings & Things - Client - " + client.getName());
+				
+				gameController.initialize(stage, initializeGame.game, instance, client);
 				client.send(NetworkPlayerStatus.PLAYER_INITIALIZED);
+				
 			}
 		
 		});
