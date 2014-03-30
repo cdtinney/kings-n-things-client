@@ -21,6 +21,7 @@ import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.model.board.IBoard;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.things.Fort;
+import com.kingsandthings.common.model.things.SpecialIncome;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
@@ -218,10 +219,14 @@ public class BoardController extends Controller implements Updatable {
 			things.get(i).setImage(new Image(imageUrls.get(i)));
 		}
 
-		IBoard board = gameClient.requestBoard();
 		boolean success;
+		IBoard board = gameClient.requestBoard();
+		
 		if (things.size() == 1 && things.get(0) instanceof Fort) {
 			success = board.placeFort((Fort) things.get(0), tile);
+			
+		} else if (things.size() == 1 && things.get(0) instanceof SpecialIncome) {
+			success = board.placeSpecialIncome((SpecialIncome) things.get(0), tile);
 			
 		} else {
 			success = board.addThingsToTile(tile, things);

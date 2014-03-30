@@ -73,6 +73,11 @@ public class PlayerPaneController extends Controller implements Updatable {
 		
 		for (final PlayerView playerView : view.getPlayerViews()) {
 			
+			// Don't add event handlers for views other than the local player
+			if (!playerView.getLocal()) {
+				continue;
+			}
+			
 			for (DataImageView rackImage : playerView.getRackImageViews()) {
 				
 				addEventHandler(rackImage, "setOnMouseClicked", "handleRackImageClicked");
@@ -185,11 +190,6 @@ public class PlayerPaneController extends Controller implements Updatable {
 	private void handleThingDragDone(Event event) {
 		
 		DragEvent dragEvent = (DragEvent) event;
-		
-		if (dragEvent.getTransferMode() == null) {
-			return;
-		} 
-		
 		selectedThings.clear();
 		
 	}

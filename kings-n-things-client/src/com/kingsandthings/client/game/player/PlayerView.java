@@ -36,6 +36,7 @@ public class PlayerView extends Pane {
 	
 	// Model
 	private Player player;
+	private boolean local;
 	
 	// View elements
 	private Text playerNameText;
@@ -85,6 +86,10 @@ public class PlayerView extends Pane {
 	
 	public List<DataImageView> getFortImageViews() {
 		return fortImages;
+	}
+	
+	public boolean getLocal() {
+		return local;
 	}
 	
 	public void setFortThings(List<Fort> forts) {
@@ -148,9 +153,8 @@ public class PlayerView extends Pane {
 	}
 	
 	public void setLocal() {
-		
+		local = true;
 		playerNameText.setUnderline(true);
-		
 	}
 	
 	public void clearSelectedRackImages() {
