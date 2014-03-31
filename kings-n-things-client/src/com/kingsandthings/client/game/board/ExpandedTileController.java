@@ -50,13 +50,13 @@ public class ExpandedTileController extends Controller {
 		return selectedThings;
 	}
 	
-	public void show(Tile tile) {
+	public void show(Tile tile, String playerName) {
 		
 		selectedThings.clear();
 
 		view.clear();
 		view.setTile(tile);
-		view.updatePlayerThings();
+		view.updatePlayerThings(playerName);
 		view.setVisible(true);
 		
 	}

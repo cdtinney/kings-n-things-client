@@ -87,7 +87,7 @@ public class ExpandedTileView extends VBox {
 		this.tile = tile;
 	}
 	
-	public void updatePlayerThings() {
+	public void updatePlayerThings(String playerName) {
 		
 		if (tile == null) {
 			return;
@@ -95,7 +95,7 @@ public class ExpandedTileView extends VBox {
 		
 		for (Player player : playerThingImages.keySet()) {
 			
-			if (player != game.getActivePlayer()) {
+			if (!player.getName().equals(playerName)) {
 				continue;
 			}
 			

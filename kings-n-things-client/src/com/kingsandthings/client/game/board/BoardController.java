@@ -58,6 +58,7 @@ public class BoardController extends Controller implements Updatable {
 	public void initialize(Game game) {
 
 		this.game = game;
+		selectedThings = new ArrayList<Thing>();
 		
 		// Initialize the board view
 		boardView = new BoardView();
@@ -73,7 +74,6 @@ public class BoardController extends Controller implements Updatable {
 		// Set up event handlers for clicking tiles
 		setupTileClickHandlers();
 		
-		selectedThings = new ArrayList<Thing>();
 		addEventHandler(expandedTileController.getView(), "finishSelection", "setOnAction", "handleThingSelection");
 		
 		PropertyChangeDispatcher.getInstance().addListener(PlayerManager.class, "activePlayer", this, "handlePlayerChanged");
@@ -95,6 +95,7 @@ public class BoardController extends Controller implements Updatable {
 			public void run() {
 				boardView.setInstruction(text);
 			}
+			
 		});
 		
 	}
@@ -154,7 +155,7 @@ public class BoardController extends Controller implements Updatable {
 		TileView tileView = tileActionMenu.getOwner();
 		
 		initialMovementTile = tileView.getTile();
-		expandedTileController.show(tileView.getTile());
+		expandedTileController.show(tileView.getTile(), gameClient.getName());
 		
 	}
 	
@@ -186,7 +187,7 @@ public class BoardController extends Controller implements Updatable {
 			TileView tileView = (TileView) event.getSource();
 			Player owner = tileView.getTile().getOwner();
 			
-			boolean activePlayerOwned = owner != null && owner.equals(game.getActivePlayer());
+			boolean activePlayerOwned = owner != null && owner.getName().equals(gameClient.getName());
 			if (activePlayerOwned) {
 				dragEvent.acceptTransferModes(TransferMode.ANY);
 			}
@@ -246,19 +247,26 @@ public class BoardController extends Controller implements Updatable {
 	
 	@SuppressWarnings("unused")
 	private void handleTileClick(Event event) {
+		
+		if (!gameClient.activePlayer()) {
+			LOGGER.log(LogLevel.STATUS, "You are not the active player.");
+			return;
+		}
+		
 		TileView tileView = (TileView) event.getSource();
 		Tile tile = tileView.getTile();
 		
 		if (selectedForMovement) {
+
+			List<Tile> neighbours = game.getBoard().getNeighbours(game.getBoard().getTiles(), initialMovementTile);
 			
-			if (!initialMovementTile.getNeighbours().contains(tile)) {
+			if (!neighbours.contains(tile)) {
 				LOGGER.log(LogLevel.STATUS, "Cannot move Things more than one tile at a time.");
 				return;
 				
 			} else if (!tile.isDiscovered()) {
 
-				// TODO - set instruction text elsewhere
-				//BoardView.setInstructionText("you are attempting to move to an unexplored hex. please roll the dice.");
+				boardView.setInstruction("you are attempting to move to an unexplored hex. please roll the dice.");
 				
 				// Blocks until the user rolls
 				boardView.showDice();
@@ -266,22 +274,25 @@ public class BoardController extends Controller implements Updatable {
 				// TASK - Demo only (hardcoded dice roll for movement)
 				int roll = 1;
 				//int roll = board.rollDice(1);
+
+				IBoard board = gameClient.requestBoard();
+				boolean success = board.moveThingsToUnexploredTile(roll, initialMovementTile, tile, selectedThings);
 				
-				game.getBoard().moveThingsToUnexploredTile(roll, initialMovementTile, tile, selectedThings);
-				
-				// TODO - set instruction text elsewhere
-				//BoardView.setInstructionText("do some movement");
+				boardView.setInstruction("do some movement");
 				
 			} else {
-				game.getBoard().moveThings(initialMovementTile, tile, selectedThings);
+				
+				IBoard board = gameClient.requestBoard();
+				board.moveThings(initialMovementTile, tile, selectedThings);
 				
 			}
 			
-			Player player = game.getActivePlayer();
-			if (!game.getBoard().movementPossible(player)) {
-				// TODO - set instruction text elsewhere
-				//BoardView.setInstructionText("no more movement possible! please end turn");
-			}
+			// TODO - alert user when no more movement is possible
+//			Player player = game.getActivePlayer();
+//			if (!game.getBoard().movementPossible(player)) {
+//				// TODO - set instruction text elsewhere
+//				//BoardView.setInstructionText("no more movement possible! please end turn");
+//			}
 
 			tileView.removeHighlight();
 			
@@ -312,8 +323,11 @@ public class BoardController extends Controller implements Updatable {
 		TileView tileView = (TileView) event.getSource();
 		
 		if (selectedForMovement) {
-			tileView.addHighlight(initialMovementTile.getNeighbours().contains(tileView.getTile()));
+			
+			List<Tile> neighbours = game.getBoard().getNeighbours(game.getBoard().getTiles(), initialMovementTile);
+			tileView.addHighlight(neighbours.contains(tileView.getTile()));
 			return;
+			
 		}
 		
 		tileView.setOpacity(0.8);
