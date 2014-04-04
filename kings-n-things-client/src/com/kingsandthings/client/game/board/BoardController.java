@@ -297,13 +297,6 @@ public class BoardController extends Controller implements Updatable {
 				board.moveThings(initialMovementTile, tile, selectedThings);
 				
 			}
-			
-			// TODO - alert user when no more movement is possible
-//			Player player = game.getActivePlayer();
-//			if (!game.getBoard().movementPossible(player)) {
-//				// TODO - set instruction text elsewhere
-//				//BoardView.setInstructionText("no more movement possible! please end turn");
-//			}
 
 			tileView.removeHighlight();
 			
