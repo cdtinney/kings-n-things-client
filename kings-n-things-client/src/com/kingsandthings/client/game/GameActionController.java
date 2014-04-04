@@ -75,14 +75,11 @@ public class GameActionController extends Controller implements Updatable {
 			
 		} else if (phase.getClass() == ThingRecruitmentPhase.class) {
 			
-//			int numPaid = view.getNumPaidSelected();
-//			
-//			boolean success = game.getCup().recruitThings(player, numPaid);
-//			if (success) {
-//				game.getPhaseManager().endPlayerTurn();
-//			}
-//			
-//			view.resetNumPaidList();
+			int numPaid = view.getNumPaidSelected();
+			view.resetNumPaidList();
+			
+			final IGame serverGame = gameClient.requestGame();
+			serverGame.recruitThings(numPaid);
 			
 		}
 		
