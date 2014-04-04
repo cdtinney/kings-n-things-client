@@ -123,7 +123,12 @@ public class PlayerView extends Pane {
 			
 			Thing thing = things.get(i);
 			
-			rackImages.get(i).setImage(thing.getImage());
+			if (local) {
+				rackImages.get(i).setImage(thing.getImage());
+			} else {
+				rackImages.get(i).setImage(Thing.getBackImage());
+			}
+			
 			rackImages.get(i).setData(thing);
 			
 		}
