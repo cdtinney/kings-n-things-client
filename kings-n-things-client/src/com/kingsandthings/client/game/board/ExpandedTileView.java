@@ -21,7 +21,7 @@ import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.things.Thing;
-import com.kingsandthings.util.DataImageView;
+import com.kingsandthings.common.util.DataImageView;
 
 public class ExpandedTileView extends VBox {
 

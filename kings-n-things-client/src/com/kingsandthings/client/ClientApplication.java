@@ -6,7 +6,7 @@ import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import com.kingsandthings.logging.LogHandler;
+import com.kingsandthings.common.logging.LogHandler;
 
 public class ClientApplication extends Application {
 	

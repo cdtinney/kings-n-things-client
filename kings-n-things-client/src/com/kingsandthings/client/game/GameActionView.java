@@ -16,13 +16,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import com.kingsandthings.common.events.NotificationDispatcher;
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.phase.InitialRecruitmentPhase;
 import com.kingsandthings.common.model.phase.Phase;
 import com.kingsandthings.common.model.phase.PhaseManager;
 import com.kingsandthings.common.model.phase.ThingRecruitmentPhase;
-import com.kingsandthings.game.events.NotificationDispatcher;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
 public class GameActionView extends VBox implements Updatable {
 

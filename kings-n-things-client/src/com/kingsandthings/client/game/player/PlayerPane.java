@@ -8,13 +8,13 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;
 
 import com.kingsandthings.client.game.Updatable;
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.model.Rack;
 import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.Thing;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
 public class PlayerPane extends VBox implements Updatable {
 	

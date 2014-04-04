@@ -18,9 +18,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import com.kingsandthings.client.game.Updatable;
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.board.Tile;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
 public class BoardView extends Pane implements Updatable {
 	

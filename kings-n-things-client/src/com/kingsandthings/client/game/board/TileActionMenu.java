@@ -11,11 +11,12 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.MenuItemBuilder;
 
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
+import com.kingsandthings.common.model.phase.ConstructionPhase;
 import com.kingsandthings.common.model.phase.MovementPhase;
 import com.kingsandthings.common.model.phase.Phase;
 import com.kingsandthings.common.model.phase.PhaseManager;
 import com.kingsandthings.common.model.phase.StartingKingdomsPhase;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
 public class TileActionMenu extends ContextMenu {
 	
@@ -36,6 +37,8 @@ public class TileActionMenu extends ContextMenu {
 		
 		setPhaseItems(MovementPhase.class, get("selectThings"));
 		setPhaseItems(StartingKingdomsPhase.class, get("placeControlMarker"));
+		setPhaseItems(ConstructionPhase.class, get("buildFort"));
+		setPhaseItems(ConstructionPhase.class, get("upgradeFort"));
 		
 	}
 	
@@ -107,8 +110,15 @@ public class TileActionMenu extends ContextMenu {
 	
 	private void addMenuItems() {
 
+		// Initial control marker placement phase
 		menuItems.put("placeControlMarker", MenuItemBuilder.create().visible(false).text("Place control marker").build());
+		
+		// Movement phase
 		menuItems.put("selectThings", MenuItemBuilder.create().visible(false).text("Select things").build());
+		
+		// Construction phase
+		menuItems.put("buildFort", MenuItemBuilder.create().visible(false).text("Build fort (5 gold)").build());
+		menuItems.put("upgradeFort", MenuItemBuilder.create().visible(false).text("Upgrade fort (5 gold)").build());
 		
 		getItems().addAll(menuItems.values());
 		

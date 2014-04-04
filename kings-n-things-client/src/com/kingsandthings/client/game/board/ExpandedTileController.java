@@ -7,12 +7,12 @@ import java.util.logging.Logger;
 import javafx.event.Event;
 
 import com.kingsandthings.common.controller.Controller;
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.things.Creature;
 import com.kingsandthings.common.model.things.Thing;
-import com.kingsandthings.logging.LogLevel;
-import com.kingsandthings.util.DataImageView;
+import com.kingsandthings.common.util.DataImageView;
 
 public class ExpandedTileController extends Controller {
 	

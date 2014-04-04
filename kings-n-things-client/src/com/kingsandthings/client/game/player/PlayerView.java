@@ -15,7 +15,7 @@ import javafx.scene.text.Text;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.Thing;
-import com.kingsandthings.util.DataImageView;
+import com.kingsandthings.common.util.DataImageView;
 
 public class PlayerView extends Pane {
 	
@@ -104,7 +104,7 @@ public class PlayerView extends Pane {
 			
 			Fort fort = forts.get(i);
 			
-			if (fort.isPlaced()) {
+			if (fort.getPlaced()) {
 				continue;
 			}
 			

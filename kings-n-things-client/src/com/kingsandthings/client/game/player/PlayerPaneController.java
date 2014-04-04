@@ -16,13 +16,16 @@ import javafx.scene.input.TransferMode;
 
 import com.kingsandthings.client.game.Updatable;
 import com.kingsandthings.common.controller.Controller;
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.PlayerManager;
+import com.kingsandthings.common.model.phase.InitialRecruitmentPhase;
+import com.kingsandthings.common.model.phase.ThingRecruitmentPhase;
+import com.kingsandthings.common.model.phase.TowerPlacementPhase;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.common.network.GameClient;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
-import com.kingsandthings.util.CustomDataFormat;
-import com.kingsandthings.util.DataImageView;
+import com.kingsandthings.common.util.CustomDataFormat;
+import com.kingsandthings.common.util.DataImageView;
 
 public class PlayerPaneController extends Controller implements Updatable {
 	
@@ -97,10 +100,11 @@ public class PlayerPaneController extends Controller implements Updatable {
 							event.consume();
 						}
 						
-						// TODO - consume depending on phases
-//						if (!game.getPhaseManager().getCurrentPhase().getStep().equals("Thing_Placement")) {
-//							event.consume();
-//						}
+						// Only allow drag and drop during certain phase steps
+						String step = game.getPhaseManager().getCurrentPhase().getStep();
+						if (!step.equals(ThingRecruitmentPhase.PLACEMENT) && !step.equals(InitialRecruitmentPhase.PLACEMENT)) {
+							event.consume();
+						}
 						
 					}
 					
@@ -125,6 +129,10 @@ public class PlayerPaneController extends Controller implements Updatable {
 						}
 						
 						if (!gameClient.activePlayer()) {
+							event.consume();
+						}
+						
+						if (game.getPhaseManager().getCurrentPhase().getClass() != TowerPlacementPhase.class) {
 							event.consume();
 						}
 						

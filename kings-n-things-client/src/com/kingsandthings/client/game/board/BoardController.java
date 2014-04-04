@@ -15,6 +15,8 @@ import javafx.scene.input.TransferMode;
 
 import com.kingsandthings.client.game.Updatable;
 import com.kingsandthings.common.controller.Controller;
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
@@ -24,9 +26,7 @@ import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.SpecialIncome;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.common.network.GameClient;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
-import com.kingsandthings.logging.LogLevel;
-import com.kingsandthings.util.CustomDataFormat;
+import com.kingsandthings.common.util.CustomDataFormat;
 
 public class BoardController extends Controller implements Updatable {
 	
@@ -64,19 +64,17 @@ public class BoardController extends Controller implements Updatable {
 		boardView = new BoardView();
 		boardView.initialize(game);		
 		
-		// Initialize the expand tile controller
+		// Initialize the expand tile controller, add to board (not visible)
 		expandedTileController = new ExpandedTileController();
 		expandedTileController.initialize(game);
-		
-		// Add the expanded tile view to the board view (initially not visible)
 		boardView.getChildren().add(expandedTileController.getView());
 		
-		// Set up event handlers for clicking tiles
-		setupTileClickHandlers();
+		// Set up event handlers for tiles
+		addTileEventHandlers();
 		
 		addEventHandler(expandedTileController.getView(), "finishSelection", "setOnAction", "handleThingSelection");
 		
-		PropertyChangeDispatcher.getInstance().addListener(PlayerManager.class, "activePlayer", this, "handlePlayerChanged");
+		PropertyChangeDispatcher.getInstance().addListener(PlayerManager.class, "activePlayer", this, "onPlayerChanged");
 		
 	}
 	
@@ -104,37 +102,8 @@ public class BoardController extends Controller implements Updatable {
 		return boardView;
 	}
 	
-	private void setupTileClickHandlers() {
-		
-		TileView[][] tileViews = boardView.getTiles();
-	
-		for (int i=0; i<tileViews.length; ++i) {
-			for (int j=0; j<tileViews[i].length; ++j) {
-				
-				final TileView tileView = tileViews[i][j];
-				if (tileView == null) {
-					continue;
-				}
-				
-				addEventHandler(tileView, "setOnMouseClicked", "handleTileClick");
-				addEventHandler(tileView, "setOnMouseEntered", "handleTileMouseEnter");
-				addEventHandler(tileView, "setOnMouseExited", "handleTileMouseExit");
-				
-				// Drag and drop
-				addEventHandler(tileView, "setOnDragOver", "handleTileDragOver");
-				addEventHandler(tileView, "setOnDragDropped", "handleTileDragDropped");
-				addEventHandler(tileView, "setOnDragExited", "handleTileDragExit");
-				
-				// Action menu (TODO - Refactor. Too many event handlers.
-				addEventHandler(tileView.getActionMenu().get("placeControlMarker"), "setOnAction", "handlePlaceControlMarkerMenuItem");
-				addEventHandler(tileView.getActionMenu().get("selectThings"), "setOnAction", "handleSelectThings");
-				
-			}
-		}
-	}
-	
 	@SuppressWarnings("unused")
-	private void handlePlayerChanged(PropertyChangeEvent event) {
+	private void onPlayerChanged(PropertyChangeEvent event) {
 		selectedThings.clear();
 		selectedForMovement = false;
 		initialMovementTile = null;		
@@ -147,6 +116,7 @@ public class BoardController extends Controller implements Updatable {
 		selectedForMovement = !selectedThings.isEmpty();
 	}
 	
+	// Tile action menu handler
 	@SuppressWarnings("unused")
 	private void handleSelectThings(Event event) {
 
@@ -159,8 +129,9 @@ public class BoardController extends Controller implements Updatable {
 		
 	}
 	
+	// Tile action menu handler
 	@SuppressWarnings("unused")
-	private void handlePlaceControlMarkerMenuItem(Event event) {
+	private void handlePlaceControlMarker(Event event) {
 		
 		MenuItem item = (MenuItem) event.getSource();
 		
@@ -174,6 +145,46 @@ public class BoardController extends Controller implements Updatable {
 		
 		IBoard serverBoard = gameClient.requestBoard();
 		boolean result = serverBoard.setTileControl(tileView.getTile(), true);
+		
+	}
+	
+	// Tile action menu handler
+	@SuppressWarnings("unused")
+	private void handleBuildFort(Event event) {
+
+		MenuItem item = (MenuItem) event.getSource();
+		
+		TileActionMenu tileActionMenu = (TileActionMenu) item.getParentPopup();
+		TileView tileView = tileActionMenu.getOwner();
+		
+		if (!gameClient.activePlayer()) {
+			LOGGER.log(LogLevel.STATUS, "You are not the active player.");
+			return;
+		}
+		
+		IBoard serverBoard = gameClient.requestBoard();
+		boolean result = serverBoard.buildFort(tileView.getTile());
+		
+		System.out.println(result);
+		
+	}
+	
+	// Tile action menu handler
+	@SuppressWarnings("unused")
+	private void handleUpgradeFort(Event event) {
+
+		MenuItem item = (MenuItem) event.getSource();
+		
+		TileActionMenu tileActionMenu = (TileActionMenu) item.getParentPopup();
+		TileView tileView = tileActionMenu.getOwner();
+		
+		if (!gameClient.activePlayer()) {
+			LOGGER.log(LogLevel.STATUS, "You are not the active player.");
+			return;
+		}
+		
+		IBoard serverBoard = gameClient.requestBoard();
+		boolean result = serverBoard.upgradeFort(tileView.getTile());
 		
 	}
 	
@@ -331,6 +342,37 @@ public class BoardController extends Controller implements Updatable {
 		}
 		
 		tileView.setOpacity(0.8);
+	}
+	
+	private void addTileEventHandlers() {
+		
+		TileView[][] tileViews = boardView.getTiles();
+	
+		for (int i=0; i<tileViews.length; ++i) {
+			for (int j=0; j<tileViews[i].length; ++j) {
+				
+				final TileView tileView = tileViews[i][j];
+				if (tileView == null) {
+					continue;
+				}
+				
+				addEventHandler(tileView, "setOnMouseClicked", "handleTileClick");
+				addEventHandler(tileView, "setOnMouseEntered", "handleTileMouseEnter");
+				addEventHandler(tileView, "setOnMouseExited", "handleTileMouseExit");
+				
+				// Drag and drop
+				addEventHandler(tileView, "setOnDragOver", "handleTileDragOver");
+				addEventHandler(tileView, "setOnDragDropped", "handleTileDragDropped");
+				addEventHandler(tileView, "setOnDragExited", "handleTileDragExit");
+				
+				// Action menu (TODO - Refactor. Too many event handlers.
+				addEventHandler(tileView.getActionMenu().get("placeControlMarker"), "setOnAction", "handlePlaceControlMarker");
+				addEventHandler(tileView.getActionMenu().get("selectThings"), "setOnAction", "handleSelectThings");
+				addEventHandler(tileView.getActionMenu().get("buildFort"), "setOnAction", "handleBuildFort");
+				addEventHandler(tileView.getActionMenu().get("upgradeFort"), "setOnAction", "handleUpgradeFort");
+				
+			}
+		}
 	}
 
 }

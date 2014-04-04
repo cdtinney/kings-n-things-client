@@ -10,13 +10,13 @@ import javafx.stage.Stage;
 
 import com.kingsandthings.client.game.GameController;
 import com.kingsandthings.common.controller.Controller;
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.common.network.NetworkObjectHandler;
 import com.kingsandthings.common.network.NetworkRegistry.InitializeGame;
 import com.kingsandthings.common.network.NetworkRegistry.NetworkPlayerStatus;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
-import com.kingsandthings.util.Dialog;
+import com.kingsandthings.common.util.Dialog;
 
 public class ClientMenuController extends Controller implements NetworkObjectHandler {
 	
