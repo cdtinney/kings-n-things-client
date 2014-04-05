@@ -12,6 +12,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.MenuItemBuilder;
 
 import com.kingsandthings.common.events.PropertyChangeDispatcher;
+import com.kingsandthings.common.model.phase.CombatPhase;
 import com.kingsandthings.common.model.phase.ConstructionPhase;
 import com.kingsandthings.common.model.phase.MovementPhase;
 import com.kingsandthings.common.model.phase.Phase;
@@ -39,6 +40,7 @@ public class TileActionMenu extends ContextMenu {
 		setPhaseItems(StartingKingdomsPhase.class, get("placeControlMarker"));
 		setPhaseItems(ConstructionPhase.class, get("buildFort"));
 		setPhaseItems(ConstructionPhase.class, get("upgradeFort"));
+		setPhaseItems(CombatPhase.class, get("resolveBattle"));
 		
 	}
 	
@@ -119,6 +121,9 @@ public class TileActionMenu extends ContextMenu {
 		// Construction phase
 		menuItems.put("buildFort", MenuItemBuilder.create().visible(false).text("Build fort (5 gold)").build());
 		menuItems.put("upgradeFort", MenuItemBuilder.create().visible(false).text("Upgrade fort (5 gold)").build());
+		
+		// Combat phase
+		menuItems.put("resolveBattle", MenuItemBuilder.create().visible(false).text("Resolve battle").build());
 		
 		getItems().addAll(menuItems.values());
 		

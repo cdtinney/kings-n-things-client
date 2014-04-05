@@ -47,6 +47,7 @@ public class BoardController extends Controller implements Updatable {
 	
 	// Sub-controllers
 	private ExpandedTileController expandedTileController;
+	private CombatController combatController;
 	
 	public void initialize(Game game, GameClient gameClient) {
 		this.gameClient = gameClient;
@@ -68,6 +69,11 @@ public class BoardController extends Controller implements Updatable {
 		expandedTileController = new ExpandedTileController();
 		expandedTileController.initialize(game);
 		boardView.getChildren().add(expandedTileController.getView());
+
+		// Initialize the combat controller, add to board (not visible)
+		combatController = new CombatController();
+		combatController.initialize(game);
+		boardView.getChildren().add(combatController.getView());
 		
 		// Set up event handlers for tiles
 		addTileEventHandlers();
@@ -145,6 +151,30 @@ public class BoardController extends Controller implements Updatable {
 		
 		IBoard serverBoard = gameClient.requestBoard();
 		boolean result = serverBoard.setTileControl(tileView.getTile(), true);
+		
+	}
+	
+	// Tile action menu handler
+	@SuppressWarnings("unused")
+	private void handleResolveBattle(Event event) {
+		
+		MenuItem item = (MenuItem) event.getSource();
+		
+		TileActionMenu tileActionMenu = (TileActionMenu) item.getParentPopup();
+		TileView tileView = tileActionMenu.getOwner();
+		
+		if (!gameClient.activePlayer()) {
+			LOGGER.log(LogLevel.STATUS, "You are not the active player.");
+			return;
+		}
+		
+		Tile tile = tileView.getTile();
+		if (!tile.hasBattleToResolve()) {
+			LOGGER.log(LogLevel.STATUS, "Tile has no battles to resolve.");
+			return;
+		}
+		
+		combatController.show(tile);
 		
 	}
 	
@@ -308,6 +338,7 @@ public class BoardController extends Controller implements Updatable {
 		}
 		
 		tileView.toggleActionMenu();	
+		
 	}
 	
 	@SuppressWarnings("unused")
@@ -363,6 +394,7 @@ public class BoardController extends Controller implements Updatable {
 				addEventHandler(tileView.getActionMenu().get("selectThings"), "setOnAction", "handleSelectThings");
 				addEventHandler(tileView.getActionMenu().get("buildFort"), "setOnAction", "handleBuildFort");
 				addEventHandler(tileView.getActionMenu().get("upgradeFort"), "setOnAction", "handleUpgradeFort");
+				addEventHandler(tileView.getActionMenu().get("resolveBattle"), "setOnAction", "handleResolveBattle");
 				
 			}
 		}
