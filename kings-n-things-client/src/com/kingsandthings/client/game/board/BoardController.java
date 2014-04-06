@@ -72,7 +72,7 @@ public class BoardController extends Controller implements Updatable {
 
 		// Initialize the combat controller, add to board (not visible)
 		combatController = new CombatController();
-		combatController.initialize(game);
+		combatController.initialize(game, gameClient);
 		boardView.getChildren().add(combatController.getView());
 		
 		// Set up event handlers for tiles
@@ -88,6 +88,10 @@ public class BoardController extends Controller implements Updatable {
 	public void update(Game game) {
 		this.game = game;
 		
+		// Update sub-controllers
+		combatController.update(game);
+		
+		// Update views
 		boardView.update(game);
 		
 	}
@@ -174,7 +178,7 @@ public class BoardController extends Controller implements Updatable {
 			return;
 		}
 		
-		combatController.show(tile);
+		combatController.start(tile);
 		
 	}
 	

@@ -6,61 +6,71 @@ import java.util.logging.Logger;
 
 import javafx.event.Event;
 
+import com.kingsandthings.client.game.Updatable;
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
+import com.kingsandthings.common.model.IGame;
 import com.kingsandthings.common.model.board.Tile;
-import com.kingsandthings.common.model.things.Creature;
+import com.kingsandthings.common.model.phase.CombatPhase;
 import com.kingsandthings.common.model.things.Thing;
+import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.common.util.DataImageView;
 
-public class CombatController extends Controller {
+public class CombatController extends Controller implements Updatable {
 	
 	private static Logger LOGGER = Logger.getLogger(ExpandedTileController.class.getName());
+	
+	// Networking
+	private GameClient gameClient;
 
 	// Model
 	private List<Thing> selectedThings;
+	private Game game;
+	private CombatPhase combatPhase;
 	
 	// View
 	private CombatView view;
 	
+	public void initialize(Game game, GameClient gameClient) {
+		this.gameClient = gameClient;
+		
+		initialize(game);
+		
+		view.setLocalName(gameClient.getName());
+
+	}
+	
 	public void initialize(Game game) {
+		this.game = game;
+		
+		selectedThings = new ArrayList<Thing>();
 		
 		view = new CombatView(game);
 		view.initialize();
 		view.setVisible(false);
 		
-		selectedThings = new ArrayList<Thing>();
+		addEventHandlers();
 		
-		addEventHandler(view, "close", "setOnMouseClicked", "onClose");
+	}
+	
+	public void update(Game game) {
+		this.game = game;
 		
-		for (DataImageView imgView : view.getImageViews()) {
-			addEventHandler(imgView, "setOnMouseClicked", "handleThingImageClicked");
-		}
-		
+		view.update(game);
 	}
 	
 	public CombatView getView() {
 		return view;
 	}
 	
-	public List<Thing> getSelectedThings() {
-		return selectedThings;
-	}
-	
-	public void show(Tile tile) {
+	public void start(Tile tile) {
 		
 		selectedThings.clear();
 		
-		view.clear();
-		view.setTile(tile);
-		view.updateThings();
-		view.setVisible(true);
+		IGame remoteGame = gameClient.requestGame();
+		remoteGame.resolveCombat(tile);
 		
-	}
-	
-	public void hideView() {
-		view.clear();
 	}
 	
 	@SuppressWarnings("unused")
@@ -69,31 +79,41 @@ public class CombatController extends Controller {
 		DataImageView imageView = (DataImageView) event.getSource();
 		Thing thing = (Thing) imageView.getData();
 		
-		if (selectedThings.contains(thing)) {
-			selectedThings.remove(thing);
-			imageView.setSelected(false);
-			
-		} else {
-			
-			Creature c = (Creature) thing;
-			if (c.getMovementEnded()) {
-				LOGGER.log(LogLevel.STATUS, "Creature can no longer move.");
-				return;
-			} else {
-				LOGGER.log(LogLevel.STATUS, "Creature has " + c.getMovesLeft() + " moves left.");
-			}
-			
-			selectedThings.add(thing);
-			imageView.setSelected(true);
-			
-		}
+		// TASK - handle Thing clicks
 		
 	}
 	
 	@SuppressWarnings("unused")
-	private void onClose(Event event) {
-		view.clear();
-		selectedThings.clear();
+	private void handleDiceButtonClicked(Event event) {
+		
+		IGame remoteGame = gameClient.requestGame();
+		remoteGame.rollCombatDice(gameClient.getName());
+		
+	}
+	
+	@SuppressWarnings("unused")
+	private void handleApplyHitsButtonClicked(Event event) {
+		
+		IGame remoteGame = gameClient.requestGame();
+		remoteGame.rollCombatDice(gameClient.getName());
+		
+	}
+	
+	@SuppressWarnings("unused")
+	private void handleRetreatButtonClicked(Event event) {
+		LOGGER.log(LogLevel.DEBUG, "Retreat button clicked");
+	}
+	
+	private void addEventHandlers() {
+
+		for (DataImageView imgView : view.getLocalImgViews()) {
+			addEventHandler(imgView, "setOnMouseClicked", "handleThingImageClicked");
+		}
+		
+		addEventHandler(view.getDiceButton(), "setOnMouseClicked", "handleDiceButtonClicked");
+		addEventHandler(view.getHitsButton(), "setOnMouseClicked", "handleApplyHitsButtonClicked");
+		addEventHandler(view.getRetreatButton(), "setOnMouseClicked", "handleRetreatButtonClicked");
+		
 	}
 
 }

@@ -2,9 +2,9 @@ package com.kingsandthings.client.game.board;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.GridPaneBuilder;
@@ -18,26 +18,34 @@ import javafx.scene.text.TextBuilder;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.board.Tile;
+import com.kingsandthings.common.model.combat.Battle;
+import com.kingsandthings.common.model.phase.CombatPhase;
+import com.kingsandthings.common.model.phase.Phase;
+import com.kingsandthings.common.model.things.Creature;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.common.util.DataImageView;
 
 public class CombatView extends VBox {
+	
+	private static Logger LOGGER = Logger.getLogger(CombatView.class.getName());
 
 	private static final int WIDTH = 500;
 	private static final int THING_WIDTH = 60;
-	
+
 	// Model
 	private Game game;
-	private Tile tile;
+	private Battle battle;	
+	private String localName;	// unique name of the local player
 	
-	private Player attacker;
+	// View elements
+	private List<GridPane> grids;
 	private List<DataImageView> attackerThingImages;
-	
-	private Player defender;
 	private List<DataImageView> defenderThingImages;
 	
-	// Views
-	private List<GridPane> grids;
+	// Action buttons
+	private Button diceButton;
+	private Button hitsButton;
+	private Button retreatButton;	
 	
 	public CombatView(Game game) {
 		this.game = game;
@@ -57,8 +65,6 @@ public class CombatView extends VBox {
 		
 		setStyle("-fx-opacity: 0.9; -fx-background-color: transparent, derive(#1d1d1d,20%);");
 		
-		addCloseButton();
-		
 		addPlayerGrid(true);
 		addPlayerGrid(false);
 		
@@ -66,75 +72,37 @@ public class CombatView extends VBox {
 		
 	}
 	
-	public void setAttacker(Player player) {
-		attacker = player;
-	}
-	
-	public void setDefender(Player player) {
-		defender = player;
-	}
-	
-	public List<DataImageView> getImageViews() {
+	public void update(Game game) {
+		this.game = game;
 		
-		List<DataImageView> imageViews = new ArrayList<DataImageView>();
-		imageViews.addAll(attackerThingImages);
-		imageViews.addAll(defenderThingImages);
-		
-		return imageViews;
-		
-	}
-	
-	public void setTile(Tile tile) {
-		this.tile = tile;
-	}
-	
-	public void updateThings() {
-		
-		Player defender = tile.getOwner();
-		((Text) lookup("#defenderText")).setText("Defender: " + defender.getName());
-		
-		List<Thing> defenderThings = tile.getThings().get(defender);
-		for (int i=0; i<defenderThings.size(); ++i) {
-
-			DataImageView imgView = defenderThingImages.get(i);
-			Thing thing = defenderThings.get(i);
-			
-			imgView.setImage(thing.getImage());
-			imgView.setData(thing);
-			
-			imgView.setVisible(true);
-			imgView.getParent().setVisible(true);
-			
-		}
-		
-		// Find the attacker
-		Player attacker = null;
-		for (Player player : game.getPlayerManager().getPlayers()) {
-			if (!player.equals(defender) && !tile.getThings().get(defender).isEmpty()) {
-				attacker = player;
-				break;
-			}
-		}
-		
-		if (attacker == null) {
+		Phase phase = game.getPhaseManager().getCurrentPhase();
+		if (!(phase instanceof CombatPhase)) {
 			return;
 		}
 		
-		((Text) lookup("#attackerText")).setText("Attacker: " + attacker.getName());
-		
-		List<Thing> attackerThings = tile.getThings().get(attacker);
-		for (int i=0; i<attackerThings.size(); ++i) {
-
-			DataImageView imgView = attackerThingImages.get(i);
-			Thing thing = attackerThings.get(i);
-			
-			imgView.setImage(thing.getImage());
-			imgView.setData(thing);
-			
-			imgView.setVisible(true);
-			imgView.getParent().setVisible(true);
-			
+		CombatPhase combatPhase = (CombatPhase) phase;
+		if (combatPhase.getCurrentBattle() == null) {
+			return;
 		}
+		
+		battle = ((CombatPhase) game.getPhaseManager().getCurrentPhase()).getCurrentBattle();
+		
+		Player attacker = battle.getAttacker();
+		Player defender = battle.getDefender();
+		if (attacker.getName().equals(localName) || defender.getName().equals(localName)) {
+			update();
+		}
+		
+	}
+	
+	public void update() {
+		
+		clear();
+		
+		updateNames();
+		updateThingImages();
+		
+		setVisible(true);
 		
 	}
 	
@@ -147,45 +115,95 @@ public class CombatView extends VBox {
 			grid.setVisible(false);
 		}
 		
-		setTile(null);
 		setVisible(false);
+		
+	}
+	
+	public List<DataImageView> getLocalImgViews() {
+
+		List<DataImageView> imageViews = new ArrayList<DataImageView>();
+		imageViews.addAll(attackerThingImages);
+		imageViews.addAll(defenderThingImages);
+		
+		return imageViews;
+		
+	}
+	
+	public Button getDiceButton() 		{ return diceButton; 	}
+	public Button getHitsButton()	 	{ return hitsButton;	}
+	public Button getRetreatButton() 	{ return retreatButton; }
+	
+	public void setLocalName(String name) {
+		localName = name;
+	}
+	
+	private void updateNames() {
+
+		((Text) lookup("#defenderText")).setText("Defender: " + battle.getDefender().getName());
+		((Text) lookup("#attackerText")).setText("Attacker: " + battle.getAttacker().getName());
+		
+	}
+	
+	private void updateThingImages() {
+		
+		if (battle.getDefender() == null || battle.getDefender() == null) {
+			LOGGER.warning("Attacker and defender must be set before updating the combat creature images.");
+			return;
+		}
+		
+		setCreatureImages(battle.getDefenderCreatures(), defenderThingImages, localName.equals(battle.getDefender().getName()));
+		setCreatureImages(battle.getAttackerCreatures(), attackerThingImages, localName.equals(battle.getAttacker().getName()));
+		
+	}
+	
+	private void setCreatureImages(List<Creature> creatures, List<DataImageView> imgViews, boolean local) {
+		
+		for (int i=0; i<creatures.size(); ++i) {
+			
+			DataImageView imgView = imgViews.get(i);
+			Thing thing = creatures.get(i);
+			setThingImage(imgView, thing, local);
+			
+		}
+		
+	}
+	
+	private void setThingImage(DataImageView imgView, Thing thing, boolean visibleImg) {
+
+		imgView.setImage(visibleImg? thing.getImage() : Thing.getBackImage());
+		imgView.setData(thing);
+		
+		imgView.setVisible(true);
+		imgView.getParent().setVisible(true);
 		
 	}
 	
 	private void addActionButtons() {
 		
 		HBox actionsBox = new HBox();
-		setMargin(actionsBox, new Insets(0, 0, 10, 10));
+		setMargin(actionsBox, new Insets(10, 10, 10, 10));
+		actionsBox.setSpacing(10);
 		
-		Button finishSelection = new Button("Finish Selection");
-		finishSelection.getStyleClass().add("nofocus");
-		finishSelection.setId("finishSelection");
+		diceButton = new Button("Roll Dice");
+		diceButton.getStyleClass().add("nofocus");
+		diceButton.setId("rollDice");
 		
-		actionsBox.getChildren().add(finishSelection);
+		hitsButton = new Button("Apply Hits");
+		hitsButton.getStyleClass().add("nofocus");
+		hitsButton.setId("applyHits");
+		
+		retreatButton = new Button("Retreat");
+		retreatButton.getStyleClass().add("nofocus");
+		retreatButton.setId("retreat");
+		
+		actionsBox.getChildren().addAll(diceButton, hitsButton, retreatButton);
 		
 		getChildren().add(actionsBox);
 		
 	}
 	
-	private void addCloseButton() {
-		
-		HBox closeButtonBox = new HBox();
-		closeButtonBox.setAlignment(Pos.TOP_RIGHT);
-		
-		Button b = new Button("Close");
-		b.getStyleClass().add("nofocus");
-		b.setId("close");
-		
-		closeButtonBox.getChildren().add(b);
-		HBox.setMargin(b, new Insets(5, 5, 0, 0));
-		
-		getChildren().add(closeButtonBox);
-		
-	}
-	
 	private void addPlayerGrid(boolean attacker) {
 		
-		// Grid
 		GridPane grid = GridPaneBuilder.create().hgap(10).vgap(5).prefHeight(150).visible(false).build();
 		grid.managedProperty().bind(grid.visibleProperty());
 		setMargin(grid, new Insets(0, 10, 0, 10));
