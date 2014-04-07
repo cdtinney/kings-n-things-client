@@ -4,8 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.GridPaneBuilder;
 import javafx.scene.layout.HBox;
@@ -19,6 +25,7 @@ import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.combat.Battle;
+import com.kingsandthings.common.model.combat.Battle.Step;
 import com.kingsandthings.common.model.phase.CombatPhase;
 import com.kingsandthings.common.model.phase.Phase;
 import com.kingsandthings.common.model.things.Creature;
@@ -97,27 +104,17 @@ public class CombatView extends VBox {
 	
 	public void update() {
 		
-		clear();
-		
 		updateNames();
 		updateThingImages();
+		updateActionButtons();
 		
 		setVisible(true);
 		
 	}
 	
-	public void clear() {
-		
-		DataImageView.clear(attackerThingImages, true);
-		DataImageView.clear(defenderThingImages, true);		
-		
-		for (GridPane grid : grids) {
-			grid.setVisible(false);
-		}
-		
-		setVisible(false);
-		
-	}
+	public Button getDiceButton() 		{ return diceButton; 	}
+	public Button getHitsButton()	 	{ return hitsButton;	}
+	public Button getRetreatButton() 	{ return retreatButton; }
 	
 	public List<DataImageView> getLocalImgViews() {
 
@@ -129,12 +126,18 @@ public class CombatView extends VBox {
 		
 	}
 	
-	public Button getDiceButton() 		{ return diceButton; 	}
-	public Button getHitsButton()	 	{ return hitsButton;	}
-	public Button getRetreatButton() 	{ return retreatButton; }
-	
 	public void setLocalName(String name) {
 		localName = name;
+	}
+	
+	public void setThingImageHits(DataImageView imgView, int hits) {
+		
+		double x = imgView.getLayoutX() + 5;
+		double y = imgView.getLayoutY() + 5;
+		
+		Label label = imgView.getLabel();
+		label.setText(String.valueOf(hits));
+		
 	}
 	
 	private void updateNames() {
@@ -142,9 +145,15 @@ public class CombatView extends VBox {
 		((Text) lookup("#defenderText")).setText("Defender: " + battle.getDefender().getName());
 		((Text) lookup("#attackerText")).setText("Attacker: " + battle.getAttacker().getName());
 		
+		((Text) lookup("#defenderText")).setUnderline(battle.getCurrentPlayer().equals(battle.getDefender()));
+		((Text) lookup("#attackerText")).setUnderline(battle.getCurrentPlayer().equals(battle.getAttacker()));
+		
 	}
 	
 	private void updateThingImages() {
+		
+		DataImageView.clear(attackerThingImages, true);
+		DataImageView.clear(defenderThingImages, true);		
 		
 		if (battle.getDefender() == null || battle.getDefender() == null) {
 			LOGGER.warning("Attacker and defender must be set before updating the combat creature images.");
@@ -153,6 +162,16 @@ public class CombatView extends VBox {
 		
 		setCreatureImages(battle.getDefenderCreatures(), defenderThingImages, localName.equals(battle.getDefender().getName()));
 		setCreatureImages(battle.getAttackerCreatures(), attackerThingImages, localName.equals(battle.getAttacker().getName()));
+		
+	}
+	
+	private void updateActionButtons() {
+		
+		Step step = battle.getCurrentStep();
+		
+		diceButton.setDisable(step != Step.ROLL_DICE);
+		hitsButton.setDisable(step != Step.APPLY_HITS);
+		retreatButton.setDisable(step != Step.RETREAT);
 		
 	}
 	
@@ -204,7 +223,7 @@ public class CombatView extends VBox {
 	
 	private void addPlayerGrid(boolean attacker) {
 		
-		GridPane grid = GridPaneBuilder.create().hgap(10).vgap(5).prefHeight(150).visible(false).build();
+		GridPane grid = GridPaneBuilder.create().hgap(10).vgap(5).prefHeight(150).visible(true).build();
 		grid.managedProperty().bind(grid.visibleProperty());
 		setMargin(grid, new Insets(0, 10, 0, 10));
 		
@@ -212,14 +231,14 @@ public class CombatView extends VBox {
 		text.setId(attacker? "attackerText" : "defenderText");
 		text.managedProperty().bind(text.visibleProperty());
 		text.visibleProperty().bind(grid.visibleProperty());
-		setMargin(text, new Insets(0, 0, 0, 10));
+		setMargin(text, new Insets(5, 0, 0, 10));
 		getChildren().add(text);
 		
 		for (int i=0; i<Tile.MAXIMUM_THINGS; ++i) {
 			
 			DataImageView imgView = new DataImageView(false, THING_WIDTH);
 			imgView.managedProperty().bind(imgView.visibleProperty());
-			imgView.setVisible(false);
+			imgView.setVisible(true);
 			
 			if (attacker) {
 				attackerThingImages.add(imgView);
@@ -227,12 +246,38 @@ public class CombatView extends VBox {
 				defenderThingImages.add(imgView);
 			}
 			
-			grid.add(imgView, i%8, i >= 8 ? 1 : 0);
+			Label label = new Label("", imgView);
+			label.setContentDisplay(ContentDisplay.BOTTOM);
+			label.setFont(Font.font("Lucida Sans", 14));
+			label.setTextFill(Color.RED);
+			
+			addPropagationHandler(label, imgView);
+			
+			imgView.setLabel(label);
+			
+			grid.add(label, i%8, i >= 8 ? 1 : 0);
 			
 		}
 		
 		grids.add(grid);
 		getChildren().add(grid);
+		
+	}
+	
+	private void addPropagationHandler(Label label, final DataImageView imgView) {
+		
+		label.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<Event>() {
+			@Override
+			public void handle(Event event) {
+				
+				if (event.getTarget().equals(imgView)) {
+					event.consume();
+					return;
+				}
+				
+				imgView.fireEvent(event);
+			}
+		});
 		
 	}
 	
