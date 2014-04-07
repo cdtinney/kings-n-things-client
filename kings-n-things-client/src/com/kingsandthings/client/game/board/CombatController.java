@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javafx.event.Event;
-import javafx.event.EventHandler;
 
 import com.kingsandthings.client.game.Updatable;
 import com.kingsandthings.common.controller.Controller;
@@ -98,27 +97,40 @@ public class CombatController extends Controller implements Updatable {
 			return;
 		}
 		
-		Creature creature = (Creature) thing;
+		boolean ownThing = view.ownImage(imageView);
+		if (!ownThing) {
+			return;
+		}
 		
-		if (creatureHits.containsKey(creature)) {
+		Creature creature = (Creature) thing;
+		Integer currentHits = creatureHits.get(creature);
+		
+		if (currentHits == null || currentHits == 0) {
 			
-			int currentHits = creatureHits.get(creature);
-			currentHits = currentHits == 0 ? 1 : 0; 		//(currentHits + 1) % (combatValue + 1);
-			creatureHits.put(creature, currentHits);
+			int hitsToApply = combatPhase.getCurrentBattle().getHitsToApply(gameClient.getName());
 			
-			view.setThingImageHits(imageView, currentHits);
+			if (totalHits >= hitsToApply) {
+				LOGGER.warning("Player has no more hits to apply");
+				return;
+			}
+			
+			currentHits = 1;
+			totalHits++;
 			
 		} else {
-			
-			creatureHits.put(creature, 1);
-			view.setThingImageHits(imageView, 1);
+
+			currentHits = 0;
+			totalHits--;
 			
 		}
+		
+		creatureHits.put(creature, currentHits);
+		view.setThingImageHits(imageView, currentHits);
 		
 	}
 	
 	@SuppressWarnings("unused")
-	private void handleDiceButtonClicked(Event event) {
+	private void handleRollDiceButtonClicked(Event event) {
 		
 		IGame remoteGame = gameClient.requestGame();
 		remoteGame.rollCombatDice(gameClient.getName());
@@ -127,7 +139,16 @@ public class CombatController extends Controller implements Updatable {
 	
 	@SuppressWarnings("unused")
 	private void handleApplyHitsButtonClicked(Event event) {
-		LOGGER.log(LogLevel.DEBUG, "Apply hits button clicked");
+		
+		int hitsToApply = combatPhase.getCurrentBattle().getHitsToApply(gameClient.getName());
+		if (totalHits != hitsToApply) {
+			LOGGER.warning("Player must apply all hits.");
+			return;
+		}
+		
+		IGame remoteGame = gameClient.requestGame();
+		remoteGame.applyHits(gameClient.getName(), creatureHits);
+		
 	}
 	
 	@SuppressWarnings("unused")
@@ -141,7 +162,7 @@ public class CombatController extends Controller implements Updatable {
 			addEventHandler(imgView, "setOnMouseClicked", "handleThingImageClicked");
 		}
 		
-		addEventHandler(view.getDiceButton(), "setOnMouseClicked", "handleDiceButtonClicked");
+		addEventHandler(view.getDiceButton(), "setOnMouseClicked", "handleRollDiceButtonClicked");
 		addEventHandler(view.getHitsButton(), "setOnMouseClicked", "handleApplyHitsButtonClicked");
 		addEventHandler(view.getRetreatButton(), "setOnMouseClicked", "handleRetreatButtonClicked");
 		

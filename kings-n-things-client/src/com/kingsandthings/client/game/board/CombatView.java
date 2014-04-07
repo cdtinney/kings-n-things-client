@@ -126,6 +126,20 @@ public class CombatView extends VBox {
 		
 	}
 	
+	public boolean ownImage(DataImageView imgView) {
+		
+		if (localName.equals(battle.getDefender().getName())) {
+			return defenderThingImages.contains(imgView);
+		}
+		
+		if (localName.equals(battle.getAttacker().getName())) {
+			return attackerThingImages.contains(imgView);
+		}
+		
+		return false;
+		
+	}
+	
 	public void setLocalName(String name) {
 		localName = name;
 	}
