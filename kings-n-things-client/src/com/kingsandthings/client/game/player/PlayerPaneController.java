@@ -93,9 +93,8 @@ public class PlayerPaneController extends Controller implements Updatable {
 					@Override
 					public void handle(Event event) {
 						
-						EventType type = event.getEventType();
-						
-						if (type != MouseEvent.DRAG_DETECTED && (type == MouseEvent.MOUSE_ENTERED || event.getEventType() == MouseEvent.MOUSE_EXITED)) {
+						EventType<? extends Event> type = event.getEventType();
+						if (type == MouseEvent.MOUSE_ENTERED || type == MouseEvent.MOUSE_EXITED || type == MouseEvent.MOUSE_MOVED) {
 							return;
 						}
 						
