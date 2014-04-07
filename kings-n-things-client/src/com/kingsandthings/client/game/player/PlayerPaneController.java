@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Node;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
@@ -92,7 +93,9 @@ public class PlayerPaneController extends Controller implements Updatable {
 					@Override
 					public void handle(Event event) {
 						
-						if (event.getEventType() == MouseEvent.MOUSE_ENTERED || event.getEventType() == MouseEvent.MOUSE_EXITED) {
+						EventType type = event.getEventType();
+						
+						if (type != MouseEvent.DRAG_DETECTED && (type == MouseEvent.MOUSE_ENTERED || event.getEventType() == MouseEvent.MOUSE_EXITED)) {
 							return;
 						}
 						

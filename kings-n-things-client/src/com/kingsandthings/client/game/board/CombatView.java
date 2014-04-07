@@ -10,7 +10,6 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.GridPaneBuilder;
@@ -145,9 +144,6 @@ public class CombatView extends VBox {
 	}
 	
 	public void setThingImageHits(DataImageView imgView, int hits) {
-		
-		double x = imgView.getLayoutX() + 5;
-		double y = imgView.getLayoutY() + 5;
 		
 		Label label = imgView.getLabel();
 		label.setText(String.valueOf(hits));
