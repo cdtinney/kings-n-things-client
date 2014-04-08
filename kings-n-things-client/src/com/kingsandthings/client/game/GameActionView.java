@@ -16,7 +16,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-import com.kingsandthings.common.events.NotificationDispatcher;
 import com.kingsandthings.common.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.phase.InitialRecruitmentPhase;
@@ -69,16 +68,6 @@ public class GameActionView extends VBox implements Updatable {
 	
 	public void enableDiceButton(boolean enable) {
 		lookup("#rollDice").setDisable(enable);
-	}
-	
-	@SuppressWarnings("unused")
-	private void onInitialPlacementStep() {
-		lookup("#endTurn").setDisable(false);
-	}
-	
-	@SuppressWarnings("unused")
-	private void onRecruitmentPhaseStep() {
-		lookup("#endTurn").setDisable(false);
 	}
 	
 	@SuppressWarnings("unused")
@@ -174,9 +163,6 @@ public class GameActionView extends VBox implements Updatable {
 	private void addListeners() {
 		
 		PropertyChangeDispatcher.getInstance().addListener(PhaseManager.class, "currentPhase", this, "onPhaseChanged");
-		
-		NotificationDispatcher.getInstance().addListener(ThingRecruitmentPhase.class, Phase.Notification.STEP, this, "onRecruitmentPhaseStep");
-		NotificationDispatcher.getInstance().addListener(InitialRecruitmentPhase.class, Phase.Notification.STEP, this, "onInitialPlacementStep");
 		
 	}
 

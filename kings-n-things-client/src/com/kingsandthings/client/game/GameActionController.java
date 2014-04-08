@@ -68,6 +68,11 @@ public class GameActionController extends Controller implements Updatable {
 			return;
 		}
 		
+		String step = phase.getStep();
+		if (!step.equals(InitialRecruitmentPhase.DRAW) || !step.equals(ThingRecruitmentPhase.DRAW)) {
+			return;
+		}
+		
 		if (phase.getClass() == InitialRecruitmentPhase.class) {
 			
 			final IGame serverGame = gameClient.requestGame();

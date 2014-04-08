@@ -2,6 +2,7 @@ package com.kingsandthings.client.game;
 
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import com.kingsandthings.client.ClientMenuController;
@@ -13,6 +14,9 @@ import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.common.network.NetworkObjectHandler;
 import com.kingsandthings.common.network.NetworkRegistry.Instruction;
 import com.kingsandthings.common.network.NetworkRegistry.UpdateGame;
+import com.kingsandthings.common.network.NetworkRegistry.WinGame;
+import com.kingsandthings.common.util.Dialog;
+import com.kingsandthings.common.util.Dialog.Type;
 
 public class GameController extends Controller implements NetworkObjectHandler {
 	
@@ -82,10 +86,29 @@ public class GameController extends Controller implements NetworkObjectHandler {
 			return;
 		}
 		
+		if (object instanceof WinGame) {
+			handleWinGame((WinGame) object);
+			return;
+		}
+		
 		LOGGER.info("Received " + object);
 		
 	}
 	
+	private void handleWinGame(final WinGame winGame) {
+
+		LOGGER.info("Game won message received.");
+		
+		Platform.runLater(new Runnable() {
+			
+			public void run() {
+				Dialog.show(Type.NOTIFY, "Player: " + winGame.winner.getName() + " has won!");
+			}
+			
+		});
+		
+	}
+
 	private void handleInstruction(Instruction instruction) {
 		boardController.updateInstruction(instruction.text);
 	}
