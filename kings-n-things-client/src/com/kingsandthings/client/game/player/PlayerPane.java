@@ -43,9 +43,10 @@ public class PlayerPane extends VBox implements Updatable {
 		
 		for (Player player : players) {
 			PlayerView view = getPlayerView(player);
+			int pos = game.getPlayerManager().getPosition(player);
 			
 			if (view != null) {
-				view.updatePlayer(player);
+				view.updatePlayer(player, pos);
 			}
 			
 		}

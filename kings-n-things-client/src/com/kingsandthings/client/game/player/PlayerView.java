@@ -37,6 +37,7 @@ public class PlayerView extends Pane {
 	// Model
 	private Player player;
 	private boolean local;
+	private int pos; 
 	
 	// View elements
 	private Text playerNameText;
@@ -72,8 +73,15 @@ public class PlayerView extends Pane {
 		
 	}
 	
-	public void updatePlayer(Player player) {
+	public void updatePlayer(Player player, int pos) {
 		this.player = player;
+		
+		// Update position text if it has changed
+		if (this.pos != pos) {
+			setPlayerText(player.getName(), pos);
+			this.pos = pos;
+		}
+		
 	}
 
 	public Player getPlayer() {
@@ -139,8 +147,8 @@ public class PlayerView extends Pane {
 		controlMarkerImage.setImage(image);
 	}
 	
-	public void setPlayerName(String name) {
-		playerNameText.setText(name);
+	public void setPlayerText(String name, int position) {
+		playerNameText.setText(name + " ( " + position + " )");
 	}
 	
 	public void setNumGoldText(int numGold) {
@@ -173,10 +181,10 @@ public class PlayerView extends Pane {
 	private void update() {
 		
 		setNumGoldText(player.getNumGold());
-		setPlayerName(player.getName());
+		setPlayerText(player.getName(), pos);
 		setControlMarkerImage(player.getControlMarker());
 		
-		// TODO - hide other players Things
+		// TASK - Show initial rack Things
 //		setRackThings(player.getRack().getThings());
 //		setFortThings(player.getForts());
 		
