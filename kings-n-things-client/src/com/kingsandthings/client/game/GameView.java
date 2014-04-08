@@ -1,7 +1,5 @@
 package com.kingsandthings.client.game;
 
-import java.beans.PropertyChangeEvent;
-
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -30,21 +28,15 @@ public class GameView extends Scene {
 	public void initialize() {
 		addMenuBar();
 		addStatusText();
-		
-		//PropertyChangeDispatcher.getInstance().addListener(PlayerManager.class, "activePlayer", this, "activePlayerChanged");
 	}
 	
-	public static String getStatusText() {
-		return status != null? status.getText() : null;
-	}
-	
-	public static void setStatusText(String message) {
+	public void setStatusText(String message) {
 		
 		if (status == null) {
 			return;
 		}
 		
-		status.setText("STATUS: " + (message == null? "" : message));		
+		status.setText("STATUS - " + (message == null? "" : message));		
 	}
 
 	public void addToBorderPane(Node node, String position) {
@@ -66,11 +58,6 @@ public class GameView extends Scene {
 			
 		}
 		
-	}
-	
-	@SuppressWarnings("unused")
-	private void activePlayerChanged(PropertyChangeEvent event) {
-		setStatusText(null);
 	}
 	
 	private void addMenuBar() {
@@ -103,7 +90,7 @@ public class GameView extends Scene {
 	
 	private void addStatusText() {
 		
-		status = new Label("STATUS:");
+		status = new Label("STATUS - ");
 		status.setFont(new Font("Lucida Console", 12));
 		status.getStyleClass().add("statusText");
 		status.setPrefWidth(root.getWidth());

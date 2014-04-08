@@ -12,6 +12,7 @@ import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.common.network.NetworkObjectHandler;
+import com.kingsandthings.common.network.NetworkRegistry.GameStatus;
 import com.kingsandthings.common.network.NetworkRegistry.Instruction;
 import com.kingsandthings.common.network.NetworkRegistry.UpdateGame;
 import com.kingsandthings.common.network.NetworkRegistry.WinGame;
@@ -80,7 +81,6 @@ public class GameController extends Controller implements NetworkObjectHandler {
 			return;
 		}
 		
-		
 		if (object instanceof Instruction) {
 			handleInstruction((Instruction) object);
 			return;
@@ -91,13 +91,28 @@ public class GameController extends Controller implements NetworkObjectHandler {
 			return;
 		}
 		
+		if (object instanceof GameStatus) {
+			handleStatus((GameStatus) object);
+			return;
+		}
+		
 		LOGGER.info("Received " + object);
 		
 	}
 	
-	private void handleWinGame(final WinGame winGame) {
+	private void handleStatus(final GameStatus gameStatus) {
+		
+		Platform.runLater(new Runnable() {
+			
+			public void run() {
+				view.setStatusText(gameStatus.message);
+			}
+			
+		});
+		
+	}
 
-		LOGGER.info("Game won message received.");
+	private void handleWinGame(final WinGame winGame) {
 		
 		Platform.runLater(new Runnable() {
 			
