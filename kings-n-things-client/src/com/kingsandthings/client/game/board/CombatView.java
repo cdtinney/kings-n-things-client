@@ -54,6 +54,7 @@ public class CombatView extends VBox implements Updatable {
 	private Button diceButton;
 	private Button hitsButton;
 	private Button retreatButton;	
+	private Button skipRetreatButton;	
 	
 	public CombatView(Game game) {
 		this.game = game;
@@ -99,6 +100,8 @@ public class CombatView extends VBox implements Updatable {
 		Player defender = battle.getDefender();
 		if (attacker.getName().equals(localName) || defender.getName().equals(localName)) {
 			update();
+			
+			setVisible(!battle.getResolved());
 		}
 		
 	}
@@ -109,13 +112,12 @@ public class CombatView extends VBox implements Updatable {
 		updateThingImages();
 		updateActionButtons();
 		
-		setVisible(true);
-		
 	}
 	
-	public Button getDiceButton() 		{ return diceButton; 	}
-	public Button getHitsButton()	 	{ return hitsButton;	}
-	public Button getRetreatButton() 	{ return retreatButton; }
+	public Button getDiceButton() 			{ return diceButton; 	}
+	public Button getHitsButton()	 		{ return hitsButton;	}
+	public Button getRetreatButton() 		{ return retreatButton; }
+	public Button getSkipRetreatButton() 	{ return skipRetreatButton; }
 	
 	public List<DataImageView> getLocalImgViews() {
 
@@ -153,9 +155,12 @@ public class CombatView extends VBox implements Updatable {
 	}
 	
 	private void updateNames() {
+		
+		String defenderName = battle.getDefender().getName();
+		String attackerName = battle.getAttacker().getName();
 
-		((Text) lookup("#defenderText")).setText("Defender: " + battle.getDefender().getName());
-		((Text) lookup("#attackerText")).setText("Attacker: " + battle.getAttacker().getName());
+		((Text) lookup("#defenderText")).setText("Defender: " + (defenderName == null? "" : defenderName));
+		((Text) lookup("#attackerText")).setText("Attacker: " + (attackerName == null? "" : attackerName));
 		
 		((Text) lookup("#defenderText")).setUnderline(battle.getCurrentPlayer().equals(battle.getDefender()));
 		((Text) lookup("#attackerText")).setUnderline(battle.getCurrentPlayer().equals(battle.getAttacker()));
@@ -244,7 +249,11 @@ public class CombatView extends VBox implements Updatable {
 		retreatButton.getStyleClass().add("nofocus");
 		retreatButton.setId("retreat");
 		
-		actionsBox.getChildren().addAll(diceButton, hitsButton, retreatButton);
+		skipRetreatButton = new Button("Skip Retreat");
+		skipRetreatButton.getStyleClass().add("nofocus");
+		skipRetreatButton.setId("skipRetreat");
+		
+		actionsBox.getChildren().addAll(diceButton, hitsButton, retreatButton, skipRetreatButton);
 		
 		getChildren().add(actionsBox);
 		

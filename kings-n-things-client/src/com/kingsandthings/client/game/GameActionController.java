@@ -15,7 +15,6 @@ import com.kingsandthings.common.network.GameClient;
 
 public class GameActionController extends Controller implements Updatable {
 
-	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(GameActionController.class.getName());
 
 	// Networking

@@ -33,7 +33,6 @@ import com.kingsandthings.common.util.DataImageView;
 
 public class PlayerPaneController extends Controller implements Updatable {
 	
-	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(PlayerPaneController.class.getName());
 	
 	// Networking

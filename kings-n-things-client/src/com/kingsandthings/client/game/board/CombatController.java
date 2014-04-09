@@ -105,9 +105,13 @@ public class CombatController extends Controller implements Updatable {
 		Creature creature = (Creature) thing;
 		Integer currentHits = creatureHits.get(creature);
 		
+		int hitsToApply = combatPhase.getCurrentBattle().getHitsToApply(gameClient.getName());
+		if (hitsToApply == 0) {
+			LOGGER.log(LogLevel.STATUS, "Player has no hits to apply.");
+			return;
+		}
+		
 		if (currentHits == null || currentHits == 0) {
-			
-			int hitsToApply = combatPhase.getCurrentBattle().getHitsToApply(gameClient.getName());
 			
 			if (totalHits >= hitsToApply) {
 				LOGGER.log(LogLevel.STATUS, "Player has no more hits to apply");
@@ -153,7 +157,18 @@ public class CombatController extends Controller implements Updatable {
 	
 	@SuppressWarnings("unused")
 	private void handleRetreatButtonClicked(Event event) {
-		LOGGER.log(LogLevel.DEBUG, "Retreat button clicked");
+		
+		IGame remoteGame = gameClient.requestGame();
+		remoteGame.retreat(gameClient.getName(), false);
+		
+	}
+	
+	@SuppressWarnings("unused")
+	private void handleSkipRetreatButtonClicked(Event event) {
+		
+		IGame remoteGame = gameClient.requestGame();
+		remoteGame.retreat(gameClient.getName(), true);
+		
 	}
 	
 	private void addEventHandlers() {
@@ -165,6 +180,7 @@ public class CombatController extends Controller implements Updatable {
 		addEventHandler(view.getDiceButton(), "setOnMouseClicked", "handleRollDiceButtonClicked");
 		addEventHandler(view.getHitsButton(), "setOnMouseClicked", "handleApplyHitsButtonClicked");
 		addEventHandler(view.getRetreatButton(), "setOnMouseClicked", "handleRetreatButtonClicked");
+		addEventHandler(view.getSkipRetreatButton(), "setOnMouseClicked", "handleSkipRetreatButtonClicked");
 		
 	}
 
