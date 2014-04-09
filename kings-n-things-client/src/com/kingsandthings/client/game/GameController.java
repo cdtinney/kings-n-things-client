@@ -134,7 +134,7 @@ public class GameController extends Controller implements NetworkObjectHandler {
 	private void updateGame(UpdateGame update) {
 		
 		Game game = update.game;
-		
+	
 		boardController.update(game);
 		playerController.update(game);
 		gameActionController.update(game);

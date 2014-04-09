@@ -87,7 +87,7 @@ public class CombatController extends Controller implements Updatable {
 		DataImageView imageView = (DataImageView) event.getSource();
 		Thing thing = (Thing) imageView.getData();
 		
-		CombatPhase combatPhase = (CombatPhase) game.getPhaseManager().getCurrentPhase();
+		combatPhase = (CombatPhase) game.getPhaseManager().getCurrentPhase();
 		if (combatPhase == null) {
 			return;
 		}
@@ -110,7 +110,7 @@ public class CombatController extends Controller implements Updatable {
 			int hitsToApply = combatPhase.getCurrentBattle().getHitsToApply(gameClient.getName());
 			
 			if (totalHits >= hitsToApply) {
-				LOGGER.warning("Player has no more hits to apply");
+				LOGGER.log(LogLevel.STATUS, "Player has no more hits to apply");
 				return;
 			}
 			
@@ -142,7 +142,7 @@ public class CombatController extends Controller implements Updatable {
 		
 		int hitsToApply = combatPhase.getCurrentBattle().getHitsToApply(gameClient.getName());
 		if (totalHits != hitsToApply) {
-			LOGGER.warning("Player must apply all hits.");
+			LOGGER.log(LogLevel.STATUS, "Player must apply all hits.");
 			return;
 		}
 		

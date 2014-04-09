@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -20,6 +21,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBuilder;
 
+import com.kingsandthings.client.game.Updatable;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.board.Tile;
@@ -31,7 +33,7 @@ import com.kingsandthings.common.model.things.Creature;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.common.util.DataImageView;
 
-public class CombatView extends VBox {
+public class CombatView extends VBox implements Updatable {
 	
 	private static Logger LOGGER = Logger.getLogger(CombatView.class.getName());
 
@@ -162,16 +164,23 @@ public class CombatView extends VBox {
 	
 	private void updateThingImages() {
 		
-		DataImageView.clear(attackerThingImages, true);
-		DataImageView.clear(defenderThingImages, true);		
-		
 		if (battle.getDefender() == null || battle.getDefender() == null) {
 			LOGGER.warning("Attacker and defender must be set before updating the combat creature images.");
 			return;
 		}
 		
-		setCreatureImages(battle.getDefenderCreatures(), defenderThingImages, localName.equals(battle.getDefender().getName()));
-		setCreatureImages(battle.getAttackerCreatures(), attackerThingImages, localName.equals(battle.getAttacker().getName()));
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				DataImageView.clear(attackerThingImages, true);
+				DataImageView.clear(defenderThingImages, true);	
+				
+				setCreatureImages(battle.getDefenderCreatures(), battle.getElimDefenderThings(), defenderThingImages);
+				setCreatureImages(battle.getAttackerCreatures(), battle.getElimAttackerThings(), attackerThingImages);
+			}
+			
+		});	
 		
 	}
 	
@@ -185,21 +194,31 @@ public class CombatView extends VBox {
 		
 	}
 	
-	private void setCreatureImages(List<Creature> creatures, List<DataImageView> imgViews, boolean local) {
+	private void setCreatureImages(List<Creature> creatures, List<Thing> elimThings, List<DataImageView> imgViews) {
 		
 		for (int i=0; i<creatures.size(); ++i) {
 			
 			DataImageView imgView = imgViews.get(i);
 			Thing thing = creatures.get(i);
-			setThingImage(imgView, thing, local);
+			setThingImage(imgView, thing, false);
+			
+		}
+		
+		for (int i=0; i<elimThings.size(); ++i) {
+			
+			int adjustedIndex = i + creatures.size();
+			
+			DataImageView imgView = imgViews.get(adjustedIndex);
+			Thing thing = elimThings.get(i);
+			setThingImage(imgView, thing, true);
 			
 		}
 		
 	}
 	
-	private void setThingImage(DataImageView imgView, Thing thing, boolean visibleImg) {
+	private void setThingImage(DataImageView imgView, Thing thing, boolean elim) {
 
-		imgView.setImage(visibleImg? thing.getImage() : Thing.getBackImage());
+		imgView.setImage(elim ? Thing.getBackImage() : thing.getImage());
 		imgView.setData(thing);
 		
 		imgView.setVisible(true);
