@@ -1,5 +1,6 @@
 package com.kingsandthings.client.game.board;
 
+import java.beans.PropertyChangeEvent;
 import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
@@ -53,6 +54,8 @@ public class BoardView extends Pane implements Updatable {
 		
 		initializeTiles(game.getBoard().getTiles());
 		
+		addListeners();
+		
 	}
 	
 	public void update(Game game) {
@@ -95,12 +98,6 @@ public class BoardView extends Pane implements Updatable {
 					
 					view.initialize(tile);
 					
-					// TODO - change this, too many listeners (or move to TileView)
-					PropertyChangeDispatcher.getInstance().addListener(Tile.class, "owner", this, view, TileView.class, "onTileOwnerChange");
-					PropertyChangeDispatcher.getInstance().addListener(Tile.class, "fort", this, view, TileView.class, "onTileFortChanged");
-					PropertyChangeDispatcher.getInstance().addListener(Tile.class, "things", this, view, TileView.class, "onTileThingsChange");
-					PropertyChangeDispatcher.getInstance().addListener(Tile.class, "battleToResolve", this, view, TileView.class, "onBattleChange");
-					
 				} catch (IndexOutOfBoundsException e) {
 					LOGGER.warning("Model and view tile array size mismatch - " + e.getMessage());
 					
@@ -109,20 +106,6 @@ public class BoardView extends Pane implements Updatable {
 			}
 		}
 		
-	}
-	
-	public void showDice() {		
-		
-		if (diceStage.getOwner() == null) {
-			diceStage.initOwner(getScene().getWindow());
-		}
-		
-		Stage parent = (Stage) getScene().getWindow();
-		diceStage.setX(parent.getX() + parent.getWidth() / 2 - 175);
-		diceStage.setY(parent.getY() + parent.getHeight() / 2 + 350);
-		
-        diceStage.showAndWait();
-        
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -141,25 +124,105 @@ public class BoardView extends Pane implements Updatable {
 		
 	}
 	
-	@SuppressWarnings("unused")
-	private void onBattleChange(TileView tileView) {
-		tileView.updateBattleHighlight();
+	public void showDice() {		
+		
+		if (diceStage.getOwner() == null) {
+			diceStage.initOwner(getScene().getWindow());
+		}
+		
+		Stage parent = (Stage) getScene().getWindow();
+		diceStage.setX(parent.getX() + parent.getWidth() / 2 - 175);
+		diceStage.setY(parent.getY() + parent.getHeight() / 2 + 350);
+		
+        diceStage.showAndWait();
+        
+	}
+	
+	private void addListeners() {
+		
+		PropertyChangeDispatcher.getInstance().addListener(Tile.class, "owner", this, "onTileOwnerChange");
+		PropertyChangeDispatcher.getInstance().addListener(Tile.class, "fort", this, "onTileFortChanged");
+		PropertyChangeDispatcher.getInstance().addListener(Tile.class, "things", this, "onTileThingsChange");
+		PropertyChangeDispatcher.getInstance().addListener(Tile.class, "battleToResolve", this,"onBattleChange");
+		
 	}
 	
 	@SuppressWarnings("unused")
-	private void onTileThingsChange(TileView tileView) {
-		tileView.updateThingsStackView();
+	private void onBattleChange(PropertyChangeEvent evt) {
+		
+		TileView view = getViewFromEvent(evt);
+		if (view == null) {
+			return;
+		}
+		
+		view.updateBattleHighlight();
 	}
 	
 	@SuppressWarnings("unused")
-	private void onTileFortChanged(TileView tileView) {
-		tileView.updateFortView();		
-	}
+	private void onTileOwnerChange(PropertyChangeEvent evt) {
+		
+		TileView view = getViewFromEvent(evt);
+		if (view == null) {
+			return;
+		}
 
+		view.updateControlMarkerView();
+		view.setImage(view.getTile().getImage());
+		
+	}
+	
 	@SuppressWarnings("unused")
-	private void onTileOwnerChange(TileView tileView) {
-		tileView.updateControlMarkerView();
-		tileView.setImage(tileView.getTile().getImage());
+	private void onTileThingsChange(PropertyChangeEvent evt) {
+		
+		TileView view = getViewFromEvent(evt);
+		if (view == null) {
+			return;
+		}
+		
+		view.updateThingsStackView();
+	}
+	
+	@SuppressWarnings("unused")
+	private void onTileFortChanged(PropertyChangeEvent evt) {
+		
+		TileView view = getViewFromEvent(evt);
+		if (view == null) {
+			return;
+		}
+		
+		view.updateFortView();		
+	}
+	
+	private TileView getViewFromEvent(PropertyChangeEvent evt) {
+		
+		Tile tile = (Tile) evt.getSource();
+		if (tile == null) {
+			LOGGER.warning("Event source is not a Tile");
+			return null;
+		}
+		
+		TileView view = findTileView(tile);
+		if (view == null) {
+			LOGGER.warning("No TileView found for the specified Tile");
+		}
+		
+		return view;
+		
+	}
+	
+	private TileView findTileView(Tile tile) {
+		
+		for (TileView[] row : tileViews) {
+			for (TileView view : row) {
+				if (view == null) continue;
+				
+				if (view.getTile().equals(tile)) return view;
+				
+			}
+		}
+		
+		return null;
+		
 	}
 	
 	private void addTileViews(TileView[][] tiles) {
