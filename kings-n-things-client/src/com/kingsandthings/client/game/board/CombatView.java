@@ -74,6 +74,7 @@ public class CombatView extends VBox implements Updatable {
 		
 		setStyle("-fx-opacity: 0.9; -fx-background-color: transparent, derive(#1d1d1d,20%);");
 		
+		addStepText();
 		addPlayerGrid(true);
 		addPlayerGrid(false);
 		
@@ -108,9 +109,24 @@ public class CombatView extends VBox implements Updatable {
 	
 	public void update() {
 		
-		updateNames();
+		updateStepText();
+		updatePlayerNames();
 		updateThingImages();
 		updateActionButtons();
+		
+	}
+	
+	public boolean ownImage(DataImageView imgView) {
+		
+		if (localName.equals(battle.getDefender().getName())) {
+			return defenderThingImages.contains(imgView);
+		}
+		
+		if (localName.equals(battle.getAttacker().getName())) {
+			return attackerThingImages.contains(imgView);
+		}
+		
+		return false;
 		
 	}
 	
@@ -129,20 +145,6 @@ public class CombatView extends VBox implements Updatable {
 		
 	}
 	
-	public boolean ownImage(DataImageView imgView) {
-		
-		if (localName.equals(battle.getDefender().getName())) {
-			return defenderThingImages.contains(imgView);
-		}
-		
-		if (localName.equals(battle.getAttacker().getName())) {
-			return attackerThingImages.contains(imgView);
-		}
-		
-		return false;
-		
-	}
-	
 	public void setLocalName(String name) {
 		localName = name;
 	}
@@ -154,7 +156,14 @@ public class CombatView extends VBox implements Updatable {
 		
 	}
 	
-	private void updateNames() {
+	private void updateStepText() {
+		
+		String text = battle == null ? "STEP: " : ("STEP: " + battle.getCurrentStep().toString());
+		((Text) lookup("#stepText")).setText(text);
+		
+	}
+	
+	private void updatePlayerNames() {
 		
 		String defenderName = battle.getDefender().getName();
 		String attackerName = battle.getAttacker().getName();
@@ -229,6 +238,18 @@ public class CombatView extends VBox implements Updatable {
 		
 		imgView.setVisible(true);
 		imgView.getParent().setVisible(true);
+		
+	}
+	
+	private void addStepText() {
+		
+		Text stepText = new Text("STEP: ");
+		stepText.setFont(Font.font("Lucida Sans", 20));
+		stepText.setFill(Color.WHITE);
+		stepText.setId("stepText");
+		setMargin(stepText, new Insets(10, 0, 0, 10));
+		
+		getChildren().add(stepText);
 		
 	}
 	
