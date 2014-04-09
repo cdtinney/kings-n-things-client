@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import com.kingsandthings.client.ClientMenuController;
 import com.kingsandthings.client.game.board.BoardController;
 import com.kingsandthings.client.game.player.PlayerPaneController;
+import com.kingsandthings.client.logging.ClientLogHandler;
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.network.GameClient;
@@ -62,6 +63,8 @@ public class GameController extends Controller implements NetworkObjectHandler {
 		
 		view = new GameView();
 		view.initialize();
+		
+		ClientLogHandler.setView(view);
 		
 		initializeSubControllers();
 		addSubViews();

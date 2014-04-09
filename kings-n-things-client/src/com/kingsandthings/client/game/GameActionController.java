@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import javafx.event.Event;
 
 import com.kingsandthings.common.controller.Controller;
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.IGame;
 import com.kingsandthings.common.model.phase.InitialRecruitmentPhase;
@@ -65,11 +66,13 @@ public class GameActionController extends Controller implements Updatable {
 		Phase phase = game.getPhaseManager().getCurrentPhase();
 		
 		if (!gameClient.activePlayer()) {
+			LOGGER.log(LogLevel.STATUS, "It is not your turn to draw.");
 			return;
 		}
 		
 		String step = phase.getStep();
 		if (!step.equals(InitialRecruitmentPhase.DRAW) || !step.equals(ThingRecruitmentPhase.DRAW)) {
+			LOGGER.log(LogLevel.STATUS, "You cannot draw Things in the current step.");
 			return;
 		}
 		

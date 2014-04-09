@@ -6,7 +6,7 @@ import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import com.kingsandthings.common.logging.LogHandler;
+import com.kingsandthings.client.logging.ClientLogHandler;
 
 public class ClientApplication extends Application {
 	
@@ -35,7 +35,7 @@ public class ClientApplication extends Application {
 	
 	public static void main(String[] args) {
 		
-		LogHandler.setHandler(LOGGER);
+		ClientLogHandler.setHandler(LOGGER);
 		
 		launch(args);
 	}
