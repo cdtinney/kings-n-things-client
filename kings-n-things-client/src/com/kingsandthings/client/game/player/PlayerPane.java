@@ -122,6 +122,19 @@ public class PlayerPane extends VBox implements Updatable {
 		
 	}
 	
+	private PlayerView getPlayerView(String playerName) {
+		
+		for (PlayerView playerView : playerViews) {
+			
+			if (playerView.getPlayer().getName().equals(playerName)) {
+				return playerView;
+			}
+		}
+		
+		return null;
+		
+	}
+	
 	@SuppressWarnings("unused")
 	private void updateActivePlayer(PropertyChangeEvent event) {
 		

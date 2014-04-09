@@ -313,12 +313,12 @@ public class BoardController extends Controller implements Updatable {
 
 				boardView.setInstruction("you are attempting to move to an unexplored hex. please roll the dice.");
 				
-				// Blocks until the user rolls
+				// Block UI until dice is rolled
 				boardView.showDice();
 				
-				// TASK - Demo only (hardcoded dice roll for movement)
-				int roll = 1;
-				//int roll = board.rollDice(1);
+				Integer roll = boardView.getDiceValue();
+				roll = roll == null ? 1 : roll;
+				LOGGER.log(LogLevel.STATUS, "Rolled a " + roll);
 
 				IBoard board = gameClient.requestBoard();
 				boolean success = board.moveThingsToUnexploredTile(roll, initialMovementTile, tile, selectedThings);

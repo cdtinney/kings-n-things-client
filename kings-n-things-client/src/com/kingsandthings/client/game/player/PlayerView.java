@@ -168,6 +168,7 @@ public class PlayerView extends Pane {
 	public void setLocal() {
 		local = true;
 		playerNameText.setUnderline(true);
+		update();
 	}
 	
 	public void clearSelectedRackImages() {
@@ -184,9 +185,7 @@ public class PlayerView extends Pane {
 		setPlayerText(player.getName(), pos);
 		setControlMarkerImage(player.getControlMarker());
 		
-		// TASK - Show initial rack Things
-//		setRackThings(player.getRack().getThings());
-//		setFortThings(player.getForts());
+		setRackThings(player.getRack().getThings());
 		
 	}
 

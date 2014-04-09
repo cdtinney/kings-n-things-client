@@ -2,15 +2,19 @@ package com.kingsandthings.client.game.board;
 
 import java.util.logging.Logger;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Modality;
@@ -121,6 +125,22 @@ public class BoardView extends Pane implements Updatable {
         
 	}
 	
+	@SuppressWarnings("rawtypes")
+	public Integer getDiceValue() {
+		
+		if (diceStage == null) {
+			return -1;
+		}
+		
+		if(diceStage.getScene() == null) {
+			return -1;
+		}
+		
+		Integer val = (Integer) ((ComboBox) diceStage.getScene().lookup("#diceValue")).getValue();
+		return val;
+		
+	}
+	
 	@SuppressWarnings("unused")
 	private void onBattleChange(TileView tileView) {
 		tileView.updateBattleHighlight();
@@ -171,9 +191,19 @@ public class BoardView extends Pane implements Updatable {
 		rollDiceButton.setPrefHeight(40);
 		rollDiceButton.setPrefWidth(130);
 		
-		Scene myDialogScene = new Scene(VBoxBuilder.create().children(rollDiceButton).alignment(Pos.CENTER).padding(new Insets(0)).build());
+		ObservableList<Integer> options = FXCollections.observableArrayList(
+			        1, 2, 3, 4, 5, 6
+			    );
+		ComboBox<Integer> comboBox = new ComboBox<Integer>(options);
+		comboBox.setId("diceValue");
+		
+		HBox box = new HBox(10);
+		box.setAlignment(Pos.CENTER);
+		box.getChildren().addAll(rollDiceButton, comboBox);
+		
+		Scene myDialogScene = new Scene(VBoxBuilder.create().children(box).alignment(Pos.CENTER).padding(new Insets(0)).build());
+		
         diceStage.setScene(myDialogScene);
-        
        
         rollDiceButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override

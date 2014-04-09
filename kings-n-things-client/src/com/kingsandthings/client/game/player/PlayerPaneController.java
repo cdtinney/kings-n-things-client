@@ -18,12 +18,15 @@ import javafx.scene.input.TransferMode;
 import com.kingsandthings.client.game.Updatable;
 import com.kingsandthings.common.controller.Controller;
 import com.kingsandthings.common.events.PropertyChangeDispatcher;
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
+import com.kingsandthings.common.model.IGame;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.model.phase.InitialRecruitmentPhase;
 import com.kingsandthings.common.model.phase.ThingRecruitmentPhase;
 import com.kingsandthings.common.model.phase.TowerPlacementPhase;
 import com.kingsandthings.common.model.things.Thing;
+import com.kingsandthings.common.model.things.Treasure;
 import com.kingsandthings.common.network.GameClient;
 import com.kingsandthings.common.util.CustomDataFormat;
 import com.kingsandthings.common.util.DataImageView;
@@ -98,6 +101,12 @@ public class PlayerPaneController extends Controller implements Updatable {
 							return;
 						}
 						
+						DataImageView imageView = (DataImageView) event.getSource();
+						Thing thing = (Thing) imageView.getData();
+						if (thing instanceof Treasure) {
+							return;
+						}
+						
 						if (!gameClient.activePlayer()) {
 							event.consume();
 						}
@@ -158,6 +167,21 @@ public class PlayerPaneController extends Controller implements Updatable {
 			
 		DataImageView imageView = (DataImageView) event.getSource();
 		Thing thing = (Thing) imageView.getData();
+		
+		if (thing instanceof Treasure) {
+			
+			Treasure t = (Treasure) thing;
+			int value = t.getGoldValue();
+			
+			IGame serverGame = gameClient.requestGame();
+			boolean success = serverGame.redeemTreasure(gameClient.getName(), t);
+			if (success) {
+				LOGGER.log(LogLevel.STATUS, "Redeemed treasure for " + value + " gold.");
+			}
+			
+			return;
+			
+		}
 		
 		if (selectedThings.contains(thing)) {
 			selectedThings.remove(thing);
