@@ -144,12 +144,6 @@ public class CombatController extends Controller implements Updatable {
 	@SuppressWarnings("unused")
 	private void handleApplyHitsButtonClicked(Event event) {
 		
-		int hitsToApply = combatPhase.getCurrentBattle().getHitsToApply(gameClient.getName());
-		if (totalHits != hitsToApply) {
-			LOGGER.log(LogLevel.STATUS, "Player must apply all hits.");
-			return;
-		}
-		
 		IGame remoteGame = gameClient.requestGame();
 		remoteGame.applyHits(gameClient.getName(), creatureHits);
 		
@@ -161,6 +155,8 @@ public class CombatController extends Controller implements Updatable {
 		IGame remoteGame = gameClient.requestGame();
 		remoteGame.retreat(gameClient.getName(), false);
 		
+		clearHits();
+		
 	}
 	
 	@SuppressWarnings("unused")
@@ -169,8 +165,15 @@ public class CombatController extends Controller implements Updatable {
 		IGame remoteGame = gameClient.requestGame();
 		remoteGame.retreat(gameClient.getName(), true);
 		
+		clearHits();
+		
 	}
 	
+	private void clearHits() {
+		totalHits = 0;
+		creatureHits.clear();
+	}
+
 	private void addEventHandlers() {
 
 		for (DataImageView imgView : view.getLocalImgViews()) {

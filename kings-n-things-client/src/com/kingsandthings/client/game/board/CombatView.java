@@ -162,8 +162,8 @@ public class CombatView extends VBox implements Updatable {
 		((Text) lookup("#defenderText")).setText("Defender: " + (defenderName == null? "" : defenderName));
 		((Text) lookup("#attackerText")).setText("Attacker: " + (attackerName == null? "" : attackerName));
 		
-		((Text) lookup("#defenderText")).setUnderline(battle.getCurrentPlayer().equals(battle.getDefender()));
-		((Text) lookup("#attackerText")).setUnderline(battle.getCurrentPlayer().equals(battle.getAttacker()));
+		((Text) lookup("#defenderText")).setUnderline(battle.isCurrentPlayer(defenderName));
+		((Text) lookup("#attackerText")).setUnderline(battle.isCurrentPlayer(attackerName));
 		
 	}
 	
@@ -196,6 +196,7 @@ public class CombatView extends VBox implements Updatable {
 		diceButton.setDisable(step != Step.ROLL_DICE);
 		hitsButton.setDisable(step != Step.APPLY_HITS);
 		retreatButton.setDisable(step != Step.RETREAT);
+		skipRetreatButton.setDisable(step != Step.RETREAT);
 		
 	}
 	
