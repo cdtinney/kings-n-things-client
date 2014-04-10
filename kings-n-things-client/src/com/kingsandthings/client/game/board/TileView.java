@@ -32,6 +32,7 @@ public class TileView extends ImageView {
 	private ImageView controlMarkerImageView;
 	private ImageView fortImageView;
 	private ImageView thingStackImageView;
+	private ImageView incomeImageView;
 	
 	public TileView (String id, int x, int y) {
 		
@@ -57,6 +58,7 @@ public class TileView extends ImageView {
 		addControlMarkerView();
 		addFortView();
 		addThingStackView();
+		addSpecialIncomeView();
 		
 		addPropagationHandler(controlMarkerImageView);
 		addPropagationHandler(fortImageView);
@@ -87,6 +89,7 @@ public class TileView extends ImageView {
 		updateControlMarkerView();
 		updateThingsStackView();
 		updateBattleHighlight();
+		updateSpecialIncomeView();
 		
 	}
 	
@@ -125,6 +128,11 @@ public class TileView extends ImageView {
 			
 		}
 		
+	}
+	
+	public void updateSpecialIncomeView() {
+		boolean hasIncome = tile.getSpecialIncome() != null;
+		incomeImageView.setImage(hasIncome ? tile.getSpecialIncome().getImage() : null);
 	}
 	
 	public void updateBattleHighlight() {
@@ -170,10 +178,21 @@ public class TileView extends ImageView {
 		setEffect(null);
 	}
 	
+	private void addSpecialIncomeView() {
+
+		double imgWidth = 30;
+		double x = getX() + 15;
+		double y = getY() + 35;
+
+		incomeImageView = ImageViewBuilder.create().fitWidth(imgWidth).x(x).y(y).preserveRatio(true).cache(true).build();
+		((Pane) getParent()).getChildren().add(incomeImageView);	
+		
+	}
+	
 	private void addThingStackView() {
 
 		double stackWidth = 35;
-		double x = getX() + TILE_WIDTH/2 - stackWidth/2;
+		double x = getX() + TILE_WIDTH/2 - stackWidth/2 + 20;
 		double y = getY() + 35;
 
 		thingStackImageView = ImageViewBuilder.create().fitWidth(stackWidth).x(x).y(y).preserveRatio(true).cache(true).build();

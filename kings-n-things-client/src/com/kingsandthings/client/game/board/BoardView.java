@@ -202,7 +202,7 @@ public class BoardView extends Pane implements Updatable {
 			return;
 		}
 
-		view.updateThingsStackView();
+		view.updateSpecialIncomeView();
 	}
 	
 	private TileView getViewFromEvent(PropertyChangeEvent evt) {
