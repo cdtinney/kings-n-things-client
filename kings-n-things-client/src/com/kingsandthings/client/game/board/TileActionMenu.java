@@ -38,6 +38,7 @@ public class TileActionMenu extends ContextMenu {
 		
 		setPhaseItems(MovementPhase.class, get("selectThings"));
 		setPhaseItems(StartingKingdomsPhase.class, get("placeControlMarker"));
+		setPhaseItems(StartingKingdomsPhase.class, get("selectStartingPosition"));
 		setPhaseItems(ConstructionPhase.class, get("buildFort"));
 		setPhaseItems(ConstructionPhase.class, get("upgradeFort"));
 		setPhaseItems(CombatPhase.class, get("resolveBattle"));
@@ -113,6 +114,7 @@ public class TileActionMenu extends ContextMenu {
 	private void addMenuItems() {
 
 		// Initial control marker placement phase
+		menuItems.put("selectStartingPosition", MenuItemBuilder.create().visible(false).text("Select starting position").build());
 		menuItems.put("placeControlMarker", MenuItemBuilder.create().visible(false).text("Place control marker").build());
 		
 		// Movement phase

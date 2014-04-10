@@ -141,6 +141,25 @@ public class BoardController extends Controller implements Updatable {
 	
 	// Tile action menu handler
 	@SuppressWarnings("unused")
+	private void handleSelectStartingPosition(Event event) {
+
+		MenuItem item = (MenuItem) event.getSource();
+		TileActionMenu tileActionMenu = (TileActionMenu) item.getParentPopup();
+		TileView tileView = tileActionMenu.getOwner();
+		
+		if (!gameClient.activePlayer()) {
+			LOGGER.log(LogLevel.STATUS, "You are not the active player.");
+			return;
+		}
+
+		IBoard serverBoard = gameClient.requestBoard();
+		serverBoard.selectStartingPosition(tileView.getTile());
+		
+	}
+
+	
+	// Tile action menu handler
+	@SuppressWarnings("unused")
 	private void handlePlaceControlMarker(Event event) {
 		
 		MenuItem item = (MenuItem) event.getSource();
@@ -153,8 +172,8 @@ public class BoardController extends Controller implements Updatable {
 			return;
 		}
 		
-		IBoard serverBoard = gameClient.requestBoard();
-		boolean result = serverBoard.setTileControl(tileView.getTile(), true);
+		IBoard serverBoard = gameClient.requestBoardNonBlocking();
+		serverBoard.setTileControl(tileView.getTile(), true);
 		
 	}
 	
@@ -196,10 +215,8 @@ public class BoardController extends Controller implements Updatable {
 			return;
 		}
 		
-		IBoard serverBoard = gameClient.requestBoard();
-		boolean result = serverBoard.buildFort(tileView.getTile());
-		
-		System.out.println(result);
+		IBoard serverBoard = gameClient.requestBoardNonBlocking();
+		serverBoard.buildFort(tileView.getTile());
 		
 	}
 	
@@ -394,6 +411,7 @@ public class BoardController extends Controller implements Updatable {
 				addEventHandler(tileView, "setOnDragExited", "handleTileDragExit");
 				
 				// Action menu (TODO - Refactor. Too many event handlers.
+				addEventHandler(tileView.getActionMenu().get("selectStartingPosition"), "setOnAction", "handleSelectStartingPosition");
 				addEventHandler(tileView.getActionMenu().get("placeControlMarker"), "setOnAction", "handlePlaceControlMarker");
 				addEventHandler(tileView.getActionMenu().get("selectThings"), "setOnAction", "handleSelectThings");
 				addEventHandler(tileView.getActionMenu().get("buildFort"), "setOnAction", "handleBuildFort");
