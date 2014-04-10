@@ -144,6 +144,7 @@ public class BoardView extends Pane implements Updatable {
 		PropertyChangeDispatcher.getInstance().addListener(Tile.class, "fort", this, "onTileFortChanged");
 		PropertyChangeDispatcher.getInstance().addListener(Tile.class, "things", this, "onTileThingsChange");
 		PropertyChangeDispatcher.getInstance().addListener(Tile.class, "battleToResolve", this,"onBattleChange");
+		PropertyChangeDispatcher.getInstance().addListener(Tile.class, "specialIncome", this,"onTileSpecialIncomeChange");
 		
 	}
 	
@@ -191,6 +192,17 @@ public class BoardView extends Pane implements Updatable {
 		}
 		
 		view.updateFortView();		
+	}
+	
+	@SuppressWarnings("unused")
+	private void onTileSpecialIncomeChange(PropertyChangeEvent evt) {
+		
+		TileView view = getViewFromEvent(evt);
+		if (view == null) {
+			return;
+		}
+
+		view.updateThingsStackView();
 	}
 	
 	private TileView getViewFromEvent(PropertyChangeEvent evt) {
