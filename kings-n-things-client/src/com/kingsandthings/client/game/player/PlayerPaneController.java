@@ -199,6 +199,11 @@ public class PlayerPaneController extends Controller implements Updatable {
 		
 		DataImageView imageView = (DataImageView) event.getSource();
 		
+		Thing thing = (Thing) imageView.getData();
+		if (thing instanceof Treasure) {
+			return;
+		}
+		
 		// Handle the case where the user simply wants to drag one Thing
 		if (selectedThings.isEmpty()) {
 			selectedThings.add((Thing) imageView.getData());
@@ -210,8 +215,8 @@ public class PlayerPaneController extends Controller implements Updatable {
 		content.put(CustomDataFormat.THINGS, selectedThings);
 		
 		List<String> imageUrls = new ArrayList<String>();
-		for (Thing thing : selectedThings) {
-			imageUrls.add(thing.getImage().impl_getUrl());
+		for (Thing t : selectedThings) {
+			imageUrls.add(t.getImage().impl_getUrl());
 		}
 		
 		content.put(CustomDataFormat.IMAGES, imageUrls);
