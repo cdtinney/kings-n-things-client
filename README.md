@@ -1,6 +1,4 @@
 kings-n-things
 ===
 
-COMP3004 - team 25 - Kings N Things
-
-game client
+COMP3004 course project. Multiplayer board game client.
